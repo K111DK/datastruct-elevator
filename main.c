@@ -123,31 +123,37 @@ typedef struct Elevator{//电梯
 typedef struct QNode{
     Person *data;
     struct QNode * next;
-}QNode,Queue;
-QNode * initQueue(){
-    QNode * queue=(QNode*)malloc(sizeof(QNode));
-    queue->next=NULL;
+}QNode;
+typedef struct Queue{
+    QNode *rear,*front;
+}Queue;
+Queue * initQueue(){
+    Queue * queue=(Queue*) malloc(sizeof (Queue));
+    queue->front=queue->rear=(QNode*)malloc(sizeof(QNode));
+    queue->rear->next=NULL;
     return queue;
 }
-QNode* enQueue(QNode * rear,Person *data){
+void enQueue(Queue*queue,Person *data){
     QNode * enElem=(QNode*)malloc(sizeof(QNode));
     enElem->data=data;
     enElem->next=NULL;
-    rear->next=enElem;
-    rear=enElem;
-    return rear;
+    queue->rear->next=enElem;
+    queue->rear=enElem;
 }
-void DeQueue(QNode * top,QNode * rear){
-    if (top->next==NULL) {
+void DeQueue(Queue*queue){
+    if (queue->front->next==NULL) {
         printf("队列为空");
         return ;
     }
-    QNode * p=top->next;
-    top->next=p->next;
-    if (rear==p) {
-        rear=top;
+    QNode * p=queue->front->next;
+    queue->front->next=p->next;
+    if (queue->rear==p) {
+        queue->rear=queue->front;
     }
     free(p);
+}
+int QueueEmpty(Queue*queue){
+    return queue->rear==queue->front?1:0;
 }
 
 void Controller(){
@@ -155,10 +161,19 @@ void Controller(){
 
 
 
-};
+}
 
 
-void PeopleProcess(){//判断是否要往各楼层等待队列加人,并根据各楼层等待人状态调整楼层按钮，调整人的出入队状态
+void PeopleProcess(Queue ** W){//判断是否要往各楼层等待队列加人,并根据各楼层等待人状态调整楼层按钮，调整人的出入队状态
+    int i=0;
+    for(i=0;i<FloorNum;i++){
+        if(QueueEmpty(W[i])){
+            continue;
+        } else{
+            break;
+        }
+    }
+    if(i==FloorNum)
 
 
 
@@ -179,6 +194,7 @@ void ElevatorProcess(){
 
 
 }
+
 Person *PersonGen(){//（伪）随机地生成一个人加入到队列
     Person *a;
     a=(Person*)malloc(sizeof (Person));
@@ -192,7 +208,7 @@ Person *PersonGen(){//（伪）随机地生成一个人加入到队列
     return a;
 }
 
-void Init(Button *But,Queue ** W,Elevator *E){
+void Init(Button *But,Queue **W,Elevator *E){
     int i=0;
     for(i=0;i<FloorNum;i++){
         But->CallDown[i]=0;
