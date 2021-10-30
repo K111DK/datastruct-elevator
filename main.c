@@ -77,6 +77,7 @@ int Pop(Stack *p)
 
 typedef struct Elevator{//电梯
     Stack *ElePeople[FloorNum];//电梯前往各目标楼层人
+    int CallCar[FloorNum];
     int State;//电梯运行状态
     int Floor;//电梯所在楼层
     int D1;//有人出入为1
@@ -247,8 +248,18 @@ void PeopleProcess(Queue **W,Elevator *E,Button *But){//判断是否要往各楼
 
 }
 
-void ElevatorProcess(){
+void ElevatorProcess(Queue **W,Elevator *E,Button *But){
+    int i=0;
+    for(i=1;i<=8;i++){
+        if(E->E[i][0]){
+            break;}
+    }
+    switch (i) {
+        case 1:Controller();break;
+        case 2:Controller();break;
+        case 3:E->D1=E->D2=1;
 
+    }
 
 
 
