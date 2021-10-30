@@ -5,6 +5,7 @@
 enum {GoingUp,GoingDown,Idle};//电梯的三种状态
 #define Maxsize 50//电梯最大载客量及各层最大排队人数
 #define FloorNum 5//楼层数
+#define MaxInterTime 100
 
 typedef struct Button{
     int CallUp[FloorNum];
@@ -18,6 +19,9 @@ typedef struct  Person{
     float InterTime;
 }Person;
 
+int GenRand(int a){//产生范围为0~a的随机整数
+    return rand()%a+1;
+}
 
 typedef struct stack//电梯栈，储存各目标楼层下的人
 {
@@ -175,12 +179,19 @@ void ElevatorProcess(){
 
 
 }
-Person *personGen(){
+Person *PersonGen(){//（伪）随机地生成一个人加入到队列
+    Person *a;
+    a=(Person*)malloc(sizeof (Person));
+    a->GivenUpTime= GenRand(100)*t;
+    a->InFloor = GenRand(FloorNum)-1;
+    a->OutFloor = GenRand(FloorNum)-1;
+    while (a->OutFloor==a->InFloor){
+        a->OutFloor = GenRand(FloorNum)-1;
+    }
+    a->InterTime = GenRand(MaxInterTime)*t;
+    return a;
+}
 
-}
-int GenRand(int a){//产生范围为0~a的随机整数
-    return rand()%a+1;
-}
 void Init(Button *But,Queue ** W,Elevator *E){
     int i=0;
     for(i=0;i<FloorNum;i++){
