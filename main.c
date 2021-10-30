@@ -173,7 +173,9 @@ void PeopleProcess(Queue ** W){//判断是否要往各楼层等待队列加人,�
             break;
         }
     }
-    if(i==FloorNum)
+    if(i==FloorNum-1){
+
+    }
 
 
 
@@ -195,7 +197,7 @@ void ElevatorProcess(){
 
 }
 
-Person *PersonGen(){//（伪）随机地生成一个人加入到队列
+void PersonRandGenAdd(Queue**W){//（伪）随机地生成一个人加入到队列
     Person *a;
     a=(Person*)malloc(sizeof (Person));
     a->GivenUpTime= GenRand(100)*t;
@@ -205,7 +207,7 @@ Person *PersonGen(){//（伪）随机地生成一个人加入到队列
         a->OutFloor = GenRand(FloorNum)-1;
     }
     a->InterTime = GenRand(MaxInterTime)*t;
-    return a;
+    enQueue(W[a->InFloor],a);//将随机生成的人加入等待队列
 }
 
 void Init(Button *But,Queue **W,Elevator *E){
