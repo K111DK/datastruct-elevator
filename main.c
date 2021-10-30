@@ -82,7 +82,7 @@ typedef struct Elevator{//电梯
     int D1;//有人出入为1
     int D2;//停留不超过300t为1
     int D3;//无人进出且门开为1
-    float E[9][1];//代表电梯各个活动及活动计时器
+    float E[9][2];//代表电梯各个活动及活动计时器
 }Elevator;
 //定义队列的结构体
 
@@ -152,8 +152,29 @@ void DeQueue(Queue*queue){
     }
     free(p);
 }
+void DeletQueNode(Queue*queue,QNode*node){
+
+}
 int QueueEmpty(Queue*queue){
     return queue->rear==queue->front?1:0;
+}
+
+void PersonRandGenAdd(Queue**W,Button *button){//（伪）随机地生成一个人加入到队列
+    Person *a;
+    a=(Person*)malloc(sizeof (Person));
+    a->GivenUpTime= GenRand(100)*t;
+    a->InFloor = GenRand(FloorNum)-1;
+    a->OutFloor = GenRand(FloorNum)-1;
+    while (a->OutFloor==a->InFloor){
+        a->OutFloor = GenRand(FloorNum)-1;
+    }
+    a->InterTime = GenRand(MaxInterTime)*t;
+    enQueue(W[a->InFloor],a);//将随机生成的人加入等待队列
+    if(a->InFloor>a->OutFloor){//进入队列时就按下按钮
+        button->CallDown[a->OutFloor]=1;
+    } else{
+        button->CallUp[a->OutFloor]=1;
+    }
 }
 
 void Controller(){
@@ -163,18 +184,58 @@ void Controller(){
 
 }
 
-
-void PeopleProcess(Queue ** W){//判断是否要往各楼层等待队列加人,并根据各楼层等待人状态调整楼层按钮，调整人的出入队状态
+void ClockAdjust(Queue **W,Elevator *E,Button *But){
     int i=0;
-    for(i=0;i<FloorNum;i++){
-        if(QueueEmpty(W[i])){
-            continue;
-        } else{
-            break;
+    QNode *s;
+    for(i=0;i<FloorNum;i++){//各楼层等待人的忍耐时间自减
+        for(s=W[i]->front;s!=W[i]->rear;s=s->next){
+            s->data->GivenUpTime--;
+            s->data->InterTime--;
         }
     }
-    if(i==FloorNum-1){
-
+    for(i=1;i<=9;i++){
+        if(E->E[i][0]==1){
+            E->E[i][1]--;
+        }
+    }
+}
+void PeopleProcess(Queue **W,Elevator *E,Button *But){//判断是否要往各楼层等待队列加人,并根据各楼层等待人状态调整楼层按钮，调整人的出入队状态
+    //1.判断是否要加入人
+    //2.遍历所有层的队列，并设置相应的电梯按钮
+    int i=0;
+    QNode *s;
+    for(i=0;i<FloorNum;i++){
+        for(s=W[i]->front;s!=W[i]->rear;s=s->next){
+            if(s->data->GivenUpTime==0){//等待时间到时
+                if(s->data->InFloor!=E->Floor||E->D1==0){
+                    DeletQueNode(W[i],s);
+                    if(s->data->InFloor>s->data->OutFloor){//考虑到当离开的恰好是最后一个人时，按钮重新置0
+                        But->CallDown[s->data->OutFloor]=0;
+                    }else{
+                        But->CallUp[s->data->OutFloor]=0;
+                    }
+                    continue;
+                }
+                else if(s->data->InFloor==E->Floor&&E->D1!=0){
+                    s->data->GivenUpTime=0;
+                    if(s->next==NULL){//轮到他时，使其进入电梯
+                        DeletQueNode(W[i],s);
+                        Push(E->ElePeople[s->data->OutFloor],s->data);
+                        if(s->data->InFloor>s->data->OutFloor){//离开按钮重新置0
+                            But->CallDown[s->data->OutFloor]=0;
+                        }else{
+                            But->CallUp[s->data->OutFloor]=0;
+                        }
+                    }
+                }
+            }
+            else if(s->data->InterTime==0){//间隔时间结束，生成下一个人
+                PersonRandGenAdd(W,But);
+            }
+            else{
+                continue;
+            }
+        }
     }
 
 
@@ -197,18 +258,7 @@ void ElevatorProcess(){
 
 }
 
-void PersonRandGenAdd(Queue**W){//（伪）随机地生成一个人加入到队列
-    Person *a;
-    a=(Person*)malloc(sizeof (Person));
-    a->GivenUpTime= GenRand(100)*t;
-    a->InFloor = GenRand(FloorNum)-1;
-    a->OutFloor = GenRand(FloorNum)-1;
-    while (a->OutFloor==a->InFloor){
-        a->OutFloor = GenRand(FloorNum)-1;
-    }
-    a->InterTime = GenRand(MaxInterTime)*t;
-    enQueue(W[a->InFloor],a);//将随机生成的人加入等待队列
-}
+
 
 void Init(Button *But,Queue **W,Elevator *E){
     int i=0;
@@ -223,16 +273,19 @@ void Init(Button *But,Queue **W,Elevator *E){
     E->State=Idle;
     for(i=0;i<9;i++){
         E->E[i][0]=0;
+        E->E[i][1]=0;
     }
 }
 
 int main(){
-    int Time=0;
+    int Time=1;
     Button *But=(Button*) malloc(sizeof (Button));
     Queue *WaitingQue[FloorNum];
     Elevator *E=(Elevator*) malloc(sizeof (Elevator));
-    Init(But,WaitingQue,E);
+    Init(But,WaitingQue,E);//初始化系统
+    PersonRandGenAdd(WaitingQue);//随机加入第一个人
     while(Time!=T){
+        ClockAdjust(WaitingQue,E,But);
 
 
 
