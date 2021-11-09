@@ -37,11 +37,11 @@ int main(){
         PeopleProcess(WaitingQue,E,But,To,Time);
         ElevatorProcess(WaitingQue,E,But,Time);
         printf("the elevator is in :%d floor now.Time:%d\n", E->Floor,*Time);
-        ElePrint(E);
         printf("E status %d\n",E->State);
+        ElePrint(E);
+        CallCarPrint(E);
         QueuePrint(WaitingQue);
         ButPrint(But);
-        CallCarPrint(E);
         TimeLinePrint(To);
         *Time+=1;
     }

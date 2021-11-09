@@ -166,11 +166,7 @@ int StackSize(Stack *p)
     int num=0;
     StackNode *node= (StackNode*) malloc(sizeof (StackNode));
     node=p->top;
-    printf("node add%x\n",node);
-    printf("%x\n",p->bottom);
-    printf("%x\n",node->next);
     while(node!=p->bottom){
-        printf("1111111111111\n");
         num++;
         node=node->next;
     }
@@ -276,7 +272,7 @@ void ElePrint(Elevator*E){
         if(!StackEmpty(E->ElePeople[i])){
             p=E->ElePeople[i]->top;
             while(p->next) {
-                printf("people:________%d\n", p->data->InterTime);
+                printf("people:-------%d-------OutFloor:%d\n", p->data->InterTime,p->data->OutFloor);
                 p = p->next;
             }
         }

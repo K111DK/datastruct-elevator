@@ -233,8 +233,6 @@ void ElevatorProcess(Queue **W,Elevator *E,Button *But,int *Time){
                                 E->Action[2] = -1;
                                 E->Action[1] = -1;
                                 E->Action[0] = 3;
-
-                                printf("ok1\n");
                                 break;
                             }
                             else{
@@ -242,7 +240,6 @@ void ElevatorProcess(Queue **W,Elevator *E,Button *But,int *Time){
                                 E->Action[1] = -1;
                                 E->Action[0] = 6;
                                 printf("elevator ready to move.Time:%d\n", *Time);
-                                printf("ok2\n");
                                 break;
                             }
                         }
@@ -348,7 +345,6 @@ void ElevatorProcess(Queue **W,Elevator *E,Button *But,int *Time){
                 if(E->Action[2]==-1){//初态表示已进行了依次循环，floor++
                     E->Floor++;}
                     if(E->CallCar[E->Floor+1]||But->CallUp[E->Floor+1]||But->CallDown[E->Floor+1]){//此时(在本层和下一层间运动)若下一层要进出，则开始减速
-                        printf("1111e:%d\n",E->Action[2]);
                         if(E->Action[2]==-1||E->Action[2]==-2) {//减速初态
                             E->Action[1] = 2;
                             E->Action[2] = deccerlerTime * t;
@@ -363,7 +359,6 @@ void ElevatorProcess(Queue **W,Elevator *E,Button *But,int *Time){
                                 E->Action[2]=-1;
                                 E->Floor+=1;
                                 printf("the elevator is stopped.Time:%d\n", *Time);
-                                printf("111\n");
                                 return;
                             }
                             else{
