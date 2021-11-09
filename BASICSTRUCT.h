@@ -36,10 +36,15 @@ typedef struct  Person{
    int InterTime;
 }Person;
 
-typedef struct stack//电梯栈，储存各目标楼层下的人
+typedef  struct StackNode{
+    Person *data;
+    struct StackNode *next;
+}StackNode;
+
+typedef struct Stack//电梯栈，储存各目标楼层下的人
 {
-    Person *top;
-    Person *bottom;
+    StackNode *top;
+    StackNode *bottom;
     int Size;
 }Stack;
 
@@ -140,8 +145,9 @@ int DeletTime(TimeLine *time){//对要加入的人进行计时，并得到当前
 
 Stack * InitStack(){
     Stack *p=(Stack*) malloc(sizeof (Stack));
-    p->bottom = (Person *)malloc(Maxsize * sizeof(Person));
-    p->top = p->bottom;
+    p->bottom=p->top=(StackNode*) malloc(sizeof (StackNode));
+    p->bottom->next=NULL;
+    p->bottom->data=NULL;
     p->Size = Maxsize;
     return p;
 }
@@ -154,31 +160,42 @@ int StackEmpty(Stack *p)
         return 0;
     }
 }
-int StackFull(Stack *p)
+int StackSize(Stack *p)
 {
-    if (p->top - p->bottom == p->Size){
-        return 1;
+    if(p->top==p->bottom)return 0;
+    int num=0;
+    StackNode *node= (StackNode*) malloc(sizeof (StackNode));
+    node=p->top;
+    printf("node add%x\n",node);
+    printf("%x\n",p->bottom);
+    printf("%x\n",node->next);
+    while(node!=p->bottom){
+        printf("1111111111111\n");
+        num++;
+        node=node->next;
     }
-    else{
-        return 0;
-    }
+    return num;
 }
 int Push(Stack *p,Person *a) {
-    if(StackFull(p)==1||a==NULL){
+    if(p==NULL){
         return 0;
     }
-    p->top = a;
-    p->top++;
-    return 1;
+    StackNode * newNode=(StackNode*) malloc(sizeof (StackNode));
+        newNode->data=a;
+        newNode->next=p->top;
+        p->top=newNode;
+        return 1;
 }
+
 Person *Pop(Stack *p)
 {
     if (StackEmpty(p) == 1||p==NULL){
         return 0;
     }
-    p->top--;
-    Person *q=p->top;
-    return q;
+    StackNode *node;
+    node=p->top;
+    p->top=p->top->next;
+    return node->data;
 }
 
 
@@ -253,21 +270,17 @@ int QueueSize(Queue*queue){
 }
 void ElePrint(Elevator*E){
     int i=0;
-    int j=0;
-    int num=0;
-    int cout=0;
-    Person *node;
-    node=NULL;
-   for(i=0;i<FloorNum;i++){
-       node=E->ElePeople[i]->top;
-       printf("%x\n",node);
-       printf("Floor:%d\n",i);
-       if(node==NULL)printf("error ----------\n");
-       while(node!=E->ElePeople[i]->bottom){
-           printf("%d\n\n",i);
-           printf("people inFloor:%d\n",node->InFloor);
-       }
-   }
+    StackNode *p;
+    for(i=0;i<FloorNum;i++){
+        printf("People to the floor%d has %d\n", i,StackSize(E->ElePeople[i]));
+        if(!StackEmpty(E->ElePeople[i])){
+            p=E->ElePeople[i]->top;
+            while(p->next) {
+                printf("people:________%d\n", p->data->InterTime);
+                p = p->next;
+            }
+        }
+    }
 }
 void QueuePrint(Queue**W){
     int i=0;

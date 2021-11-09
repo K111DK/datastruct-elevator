@@ -420,7 +420,7 @@ void ElevatorProcess(Queue **W,Elevator *E,Button *But,int *Time){
                     }
                 }
                 else{
-                    if(E->Action[2]==-1) {
+                    if(E->Action[2]==-1||E->Action[2]==-2) {
                         E->Action[1] = 8;
                         E->Action[2] = DowningTime * t;
                         E->Action[2] -= t;
