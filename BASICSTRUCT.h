@@ -6,13 +6,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #define t 1//单位时间
-#define T 2000//总模拟时间
+#define T 500//总模拟时间
 enum {GoingUp,GoingDown,Idle,GoingBack};//电梯的三种状态
 #define Maxsize 500//电梯最大载客量及各层最大排队人数
 #define FloorNum 5//楼层数
 #define MaxInterTime 30
-
-
+#define DoorOperTime 2
+#define InOutTime 2
+#define AccerlerTime 4
+#define deccerlerTime 4
+#define UpingTime 5
+#define DowningTime 6
+#define IdleTime 15
+#define DetectTime 4
 typedef struct TimeLine{
     struct TimeLine *next;
     int time;
@@ -60,7 +66,6 @@ typedef struct Queue{
 
 TimeLine *TimeLineInit(){
     TimeLine *time=(TimeLine*)malloc(sizeof (TimeLine));
-    printf("t malloc\n");
     time->time=-1;
     time->next=NULL;
     return time;
@@ -72,7 +77,6 @@ void InsertTime(TimeLine *time,int tic){
         time->time=tic*t;
     } else{
         TimeLine *s= (TimeLine*)malloc(sizeof (TimeLine));
-        printf("t malloc 2\n");
         s->time=tic*t;
         while (time->next){
             time=time->next;
@@ -87,7 +91,7 @@ void TimeLinePrint(TimeLine* To){
     }else{
         TimeLine * Node=To;
         while(Node){
-            printf("time:%d---\n",Node->time);
+            printf("time that next person join the queue:%d\n",Node->time);
             Node=Node->next;
         }
         printf("\n");
@@ -107,8 +111,6 @@ int DeletTime(TimeLine *time){//对要加入的人进行计时，并得到当前
     pre->time-=t;
     front=pre->next;
     if(front==NULL){
-//        printf("hell");
-//        printf("%f\n",pre->time);
         num = pre->time==0?1:0;
         if(num==1){
             pre->time=-1;
@@ -134,8 +136,9 @@ int DeletTime(TimeLine *time){//对要加入的人进行计时，并得到当前
     return num;
 }
 
+
+
 Stack * InitStack(){
-    printf("stack malloc\n");
     Stack *p=(Stack*) malloc(sizeof (Stack));
     p->bottom = (Person *)malloc(Maxsize * sizeof(Person));
     p->top = p->bottom;
@@ -161,7 +164,7 @@ int StackFull(Stack *p)
     }
 }
 int Push(Stack *p,Person *a) {
-    if(StackFull(p)==1){
+    if(StackFull(p)==1||a==NULL){
         return 0;
     }
     p->top = a;
@@ -170,7 +173,7 @@ int Push(Stack *p,Person *a) {
 }
 Person *Pop(Stack *p)
 {
-    if (StackEmpty(p) == 1){
+    if (StackEmpty(p) == 1||p==NULL){
         return 0;
     }
     p->top--;
@@ -178,17 +181,19 @@ Person *Pop(Stack *p)
     return q;
 }
 
+
+
+
+
+
 Queue * initQueue(){
     Queue * queue=(Queue*) malloc(sizeof (Queue));
     queue->front=queue->rear=(QNode*)malloc(sizeof(QNode));
-    printf("queue malloc\n");
     queue->rear->next=NULL;
     return queue;
 }
 void enQueue(Queue*queue,Person *data){
-    printf("111111111\n");
     QNode * enElem;
-    printf("qnode malloc\n");
     enElem=(QNode*)malloc(sizeof(QNode));
     enElem->data=data;
     enElem->next=NULL;
@@ -197,7 +202,6 @@ void enQueue(Queue*queue,Person *data){
 }
 QNode *DeQueue(Queue*queue){
     if (queue->front->next==NULL) {
-        printf("队列为空");
         return NULL;
     }
     QNode * p=queue->front->next;
@@ -247,14 +251,23 @@ int QueueSize(Queue*queue){
         return i;
     }
 }
-void ElePrint(Stack**s){
+void ElePrint(Elevator*E){
     int i=0;
-    if(s==NULL){
-        return;
-    }
-    for(i=0;i<FloorNum;i++){
-        printf("Floor no%d:%l people\n",i,s[i]->top-s[i]->bottom);
-    }
+    int j=0;
+    int num=0;
+    int cout=0;
+    Person *node;
+    node=NULL;
+   for(i=0;i<FloorNum;i++){
+       node=E->ElePeople[i]->top;
+       printf("%x\n",node);
+       printf("Floor:%d\n",i);
+       if(node==NULL)printf("error ----------\n");
+       while(node!=E->ElePeople[i]->bottom){
+           printf("%d\n\n",i);
+           printf("people inFloor:%d\n",node->InFloor);
+       }
+   }
 }
 void QueuePrint(Queue**W){
     int i=0;
@@ -264,5 +277,22 @@ void QueuePrint(Queue**W){
     for(i=0;i<FloorNum;i++){
         printf("Floor no%d Queue has:%d people\n",i, QueueSize(W[i]));
     }
+}
+void ButPrint(Button *button){
+    if(button==NULL){
+        return;
+    }else{
+        int i=0;
+        for(i=0;i<FloorNum;i++){
+            printf("Button in the %d Floor: CallUp[%d] CallDown[%d]\n",i,button->CallUp[i],button->CallDown[i]);
+        }
+    }
+}
+void CallCarPrint(Elevator*E){
+    int i=0;
+    for(i=0;i<FloorNum;i++){
+        printf("CallCar Floor:%d [%d]\n",i,E->CallCar[i]);
+    }
+    return;
 }
 #endif //MAIN_C_BASICSTRUCT_H
