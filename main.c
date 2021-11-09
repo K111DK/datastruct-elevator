@@ -29,16 +29,17 @@ int main(){
     Queue *WaitingQue[FloorNum];
     Elevator *E=(Elevator*) malloc(sizeof (Elevator));
     printf("e malloc\n");
-    E->ElePeople[1]=InitStack(E->ElePeople[1]);
+    E->ElePeople[1]=InitStack();
     Init(But,WaitingQue,E);//初始化系统
     PersonRandGenAdd(WaitingQue,But,E,To,Time);//随机加入第一个人
     while(*Time!=T){
-        system("cls");
-        _sleep(0.5);
+        srand((unsigned int)*Time);
         PeopleProcess(WaitingQue,E,But,To,Time);
         ElevatorProcess(WaitingQue,E,But,Time);
         printf("the elevator is in :%d floor now.Time:%d\n", E->Floor,*Time);
+        ElePrint(E->ElePeople);
+        QueuePrint(WaitingQue);
+        TimeLinePrint(To);
         *Time+=1;
     }
-    return 0;
 }

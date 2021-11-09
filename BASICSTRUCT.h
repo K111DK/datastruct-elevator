@@ -6,11 +6,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #define t 1//单位时间
-#define T 1000//总模拟时间
+#define T 2000//总模拟时间
 enum {GoingUp,GoingDown,Idle,GoingBack};//电梯的三种状态
-#define Maxsize 50//电梯最大载客量及各层最大排队人数
+#define Maxsize 500//电梯最大载客量及各层最大排队人数
 #define FloorNum 5//楼层数
-#define MaxInterTime 100
+#define MaxInterTime 30
 
 
 typedef struct TimeLine{
@@ -61,14 +61,14 @@ typedef struct Queue{
 TimeLine *TimeLineInit(){
     TimeLine *time=(TimeLine*)malloc(sizeof (TimeLine));
     printf("t malloc\n");
-    time->time=0;
+    time->time=-1;
     time->next=NULL;
     return time;
 }
 
 void InsertTime(TimeLine *time,int tic){
     if(!time)return;
-    if(time->next==NULL&&time->time==0){
+    if(time->next==NULL&&time->time==-1){
         time->time=tic*t;
     } else{
         TimeLine *s= (TimeLine*)malloc(sizeof (TimeLine));
@@ -81,11 +81,26 @@ void InsertTime(TimeLine *time,int tic){
         s->next=NULL;
     }
 }
-
+void TimeLinePrint(TimeLine* To){
+    if(To->next==NULL&&To->time==-1){
+        return;
+    }else{
+        TimeLine * Node=To;
+        while(Node){
+            printf("time:%d---\n",Node->time);
+            Node=Node->next;
+        }
+        printf("\n");
+        return;
+    }
+}
 int DeletTime(TimeLine *time){//对要加入的人进行计时，并得到当前时刻的加入人数
     TimeLine *pre,*front;
     int num=0;
-    if(!time||(time->next==NULL&&time->time==0)){
+    if(!time){
+        return 0;
+    }
+    if((time->next==NULL&&time->time==-1)){
         return 0;
     }
     pre=time;
@@ -96,7 +111,7 @@ int DeletTime(TimeLine *time){//对要加入的人进行计时，并得到当前
 //        printf("%f\n",pre->time);
         num = pre->time==0?1:0;
         if(num==1){
-            pre->time=0;
+            pre->time=-1;
         }
         return num;
     }
@@ -158,8 +173,8 @@ Person *Pop(Stack *p)
     if (StackEmpty(p) == 1){
         return 0;
     }
-    Person *q=p->top;
     p->top--;
+    Person *q=p->top;
     return q;
 }
 
@@ -175,7 +190,6 @@ void enQueue(Queue*queue,Person *data){
     QNode * enElem;
     printf("qnode malloc\n");
     enElem=(QNode*)malloc(sizeof(QNode));
-    enElem->data=(Person*) malloc(sizeof (Person));
     enElem->data=data;
     enElem->next=NULL;
     queue->rear->next=enElem;
@@ -189,7 +203,7 @@ QNode *DeQueue(Queue*queue){
     QNode * p=queue->front->next;
     queue->front->next=p->next;
     if (queue->rear==p) {
-        queue->rear=queue->front;
+        queue->front=queue->rear;
     }
     return p;
 }
@@ -197,20 +211,58 @@ void DeletQueNode(Queue*queue,QNode*node){
     if(queue->rear==queue->front){//队列为空
         exit(0);
     }
-    QNode *temp=queue->front;
-    while(temp->next!=node){
+    QNode *temp;
+    temp=queue->front->next;
+    while((temp->next!=node)&&!temp){
         temp=temp->next;
     }
     if(node->next==NULL){//只有1个结点
-        free(queue->front);
         queue->front=queue->rear;
         queue->rear->next=NULL;
+        return;
     }
     temp->next=temp->next->next;
 }
 int QueueEmpty(Queue*queue){
-    return queue->rear==queue->front?1:0;
+    if(queue->rear==queue->front){
+        return 1;
+    }else{
+        return 0;
+    }
 }
-
-
+int QueueSize(Queue*queue){
+    int i=0;
+    if(queue==NULL){
+        return -1;
+    }
+    if(queue->rear==queue->front){
+        return 0;
+    }else{
+        QNode *p;
+        p=queue->front->next;
+        while(p){
+            p=p->next;
+            i++;
+        }
+        return i;
+    }
+}
+void ElePrint(Stack**s){
+    int i=0;
+    if(s==NULL){
+        return;
+    }
+    for(i=0;i<FloorNum;i++){
+        printf("Floor no%d:%l people\n",i,s[i]->top-s[i]->bottom);
+    }
+}
+void QueuePrint(Queue**W){
+    int i=0;
+    if(W==NULL){
+        return;
+    }
+    for(i=0;i<FloorNum;i++){
+        printf("Floor no%d Queue has:%d people\n",i, QueueSize(W[i]));
+    }
+}
 #endif //MAIN_C_BASICSTRUCT_H
