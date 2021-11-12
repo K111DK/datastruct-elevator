@@ -36,7 +36,9 @@ int main(){
         srand((unsigned int)*(Time));//*time(NULL)
         PeopleProcess(WaitingQue,E,But,To,Time);
         ElevatorProcess(WaitingQue,E,But,Time);
-        ElePrint(E);
+        //ElePrint(E);
+        printf("目标楼层:%d\n", Controller(WaitingQue,E,But,0,Time));
+        printf("E status:%d\n",E->State);
         QueuePrint(WaitingQue,But,E);
         TimeLinePrint(To);
         *Time+=1;
