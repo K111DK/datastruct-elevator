@@ -36,12 +36,8 @@ int main(){
         srand((unsigned int)*(Time));//*time(NULL)
         PeopleProcess(WaitingQue,E,But,To,Time);
         ElevatorProcess(WaitingQue,E,But,Time);
-        printf("the elevator is in :%d floor now.Time:%d\n", E->Floor,*Time);
-        printf("E status %d\n",E->State);
         ElePrint(E);
-        CallCarPrint(E);
-        QueuePrint(WaitingQue);
-        ButPrint(But);
+        QueuePrint(WaitingQue,But,E);
         TimeLinePrint(To);
         *Time+=1;
     }
