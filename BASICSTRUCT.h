@@ -34,6 +34,7 @@ typedef struct  Person{
     int OutFloor;
     int GivenUpTime;
    int InterTime;
+   int code;
 }Person;
 
 typedef  struct StackNode{

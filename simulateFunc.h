@@ -12,6 +12,7 @@ Person *PersonRandGenAdd(Queue **W,Button *button,Elevator *E,TimeLine *To,const
     a->InFloor = GenRand(FloorNum)-1;
     a->OutFloor = GenRand(FloorNum)-1;
     a->InterTime = GenRand(MaxInterTime)*t;
+    a->code=*Time;
     InsertTime(To,a->InterTime);
     while (a->OutFloor==a->InFloor){
         a->OutFloor = GenRand(FloorNum)-1;
@@ -19,11 +20,11 @@ Person *PersonRandGenAdd(Queue **W,Button *button,Elevator *E,TimeLine *To,const
 //    printf("INFO:\nGUtime:%f\nITtime:%f\n",a->GivenUpTime,a->InterTime);
     enQueue(W[a->InFloor],a);
     //将随机生成的人加入等待队列
-    printf("people come in to queue.Time:%d\n", *Time);
-    printf("People info:\nGivenUp Time:%d\nInFloor:%d\nOutFloor:%d\nInterTime:%d\n",a->GivenUpTime,a->InFloor,a->OutFloor,a->InterTime);
+    printf("No:%d come in to queue.Time:%d\n", a->code,*Time);
+    printf("People info:\nGivenUp Time:%d\nInFloor:%d\nOutFloor:%d\nInterTime:%d\nCode:%d\n",a->GivenUpTime,a->InFloor,a->OutFloor,a->InterTime,a->code);
     if(a->InFloor==E->Floor&&(E->Action[0]==3||E->Action[0]==4)){
         a->GivenUpTime=0;
-        printf("ready to get in the elevator.Time:%d\n", *Time);
+        printf("No:%d ready to get in the elevator.Time:%d\n",a->code,*Time);
     }
         E->CallCar[a->InFloor]=1;
         if(a->InFloor>a->OutFloor){
@@ -31,7 +32,7 @@ Person *PersonRandGenAdd(Queue **W,Button *button,Elevator *E,TimeLine *To,const
         }else{
             button->CallUp[a->InFloor]=1;
         }
-        printf("press the button and wait.Time:%d\n", *Time);
+        printf("No:%d press the button and wait.Time:%d\n",a->code,*Time);
     return a;
 }
 
@@ -190,16 +191,16 @@ void ElevatorProcess(Queue **W,Elevator *E,Button *But,int *Time){
                                     p = DeQueue(W[E->Floor]);//当层人出队
                                     E->CallCar[p->data->OutFloor]=1;//电梯内目标楼层按钮按下
                                     Push(E->ElePeople[p->data->OutFloor], p->data);//把人压入电梯中
-                                    printf("people entered the elevator.Time:%d\n", *Time);
+                                    printf("No:%d entered the elevator.Time:%d\n",p->data->code,*Time);
                                     E->Action[2] = -1;
                                     return;
                                 } else {
                                     E->Action[2] -= t;//继续计时
-                                    printf("people entering.Time:%d\n", *Time);
+                                    printf("No:%d entering.Time:%d\n",W[E->Floor]->front->next->data->code,*Time);
                                     return;
                                 }
                             } else {//进门初态25t为周期开始计时
-                                printf("people entering.Time:%d\n", *Time);
+                                printf("No:%d entering.Time:%d\n",W[E->Floor]->front->next->data->code,*Time);
                                 E->Action[2] = InOutTime * t;
                                 E->Action[2] -= t;
                                 return;
@@ -208,8 +209,7 @@ void ElevatorProcess(Queue **W,Elevator *E,Button *But,int *Time){
                     } else {//有人出
                         if (E->Action[2] != -1) {//非计时状态，对下一个人进行计时
                             if (E->Action[2] == t) {//计时完毕，将人从电梯栈中弹出
-                                printf("people get out of elevator.Time:%d\n", *Time);
-                                Pop(E->ElePeople[E->Floor]);
+                                printf("No:%d get out of elevator.Time:%d\n",Pop(E->ElePeople[E->Floor])->code,*Time);
                                 E->Action[2] = -1;//计时器归位
                                 return;
                             } else {
@@ -449,28 +449,25 @@ void PeopleProcess(Queue **W,Elevator *E,Button *But,TimeLine *To,int* Time){
         while(node!=NULL){
             node->data->InFloor;
             if(node->data==NULL)break;
-            if(node->data->InFloor==E->Floor&&(E->Action[0]==4||E->Action[0]==3)){
+            if(node->data->InFloor==E->Floor&&(E->Action[0]==4||E->Action[0]==3||E->Action[0]==1)){
                 node->data->GivenUpTime=0;
-                printf("ready to get in the elevator.Time:%d\n", *Time);
+                printf("No:%d ready to get in the elevator.Time:%d\n",node->data->code ,*Time);
                 break;
             }else{
                 if(node->data->GivenUpTime==t){
                     DeletQueNode(W[i],node);
-                    printf("people leave the queue.Time:%d\n", *Time);
+                    printf("No:%d leave the queue.Time:%d\n",node->data->code,*Time);
                 }
                 else{
                     node->data->GivenUpTime-=t;
-                    printf("the people is waiting in line.Time:%d\n", *Time);
+                    printf("No:%d is waiting in line.Time:%d\n",node->data->code ,*Time);
                 }
             }
             node=node->next;
         }
     }
-    i= DeletTime(To);
-    while(i){
-        printf("1 person gen\n");
-    PersonRandGenAdd(W,But,E,To,Time);
-    i--;
+    if(DeletTime(To)==1){
+        PersonRandGenAdd(W,But,E,To,Time);
     }
 }
 
