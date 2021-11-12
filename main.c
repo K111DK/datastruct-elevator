@@ -19,6 +19,7 @@ void Init(Button *But,Queue **W,Elevator *E){
     E->Action[0]=1;
     E->Action[1]=-1;
     E->Action[2]=-1;
+    E->Action[3]=-1;
 }
 
 int main(){

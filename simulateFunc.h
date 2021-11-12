@@ -163,37 +163,27 @@ void ElevatorProcess(Queue **W,Elevator *E,Button *But,int *Time){
 //                } else {
 //                    E->D2 = 0;
 //                }
-                if (E->D2 == 1) {//有人整蛊时，等待70t后关门
-                    printf("the elevator is idle now.Time:%d\n", *Time);
-                    if (E->Action[2] == -1) {//初态开始计时
-                        E->Action[1] = 5;
-                        E->Action[2] = 70 * t;
-                        return;
-                    } else {
-                        if (E->Action[2] == t) {//跳转到5准备回1层
-                            E->Action[0] = 5;
-                            E->Action[1] = -1;
-                            E->Action[2] = -1;
-                            return;
-                        } else {
-                            E->Action[2] -= t;//计时
-                            return;
-                        }
+                if (!StackEmpty(E->ElePeople[E->Floor])&&!QueueEmpty(W[E->Floor])) {//有人进出时,进行40t计时,当进出状态保持，40t会不断刷新，进出完毕时，40t会直接进入以下倒数状态
+                    if(E->Action[3]==-1||E->Action[3]==t){
+                        E->Action[3]=DetectTime*t;
+                    }else{
+                        E->Action[3]-=t;
                     }
-                } else {//无人整蛊，正常出入
+                } //无人整蛊，正常出入
                     if (StackEmpty(E->ElePeople[E->Floor])) {//电梯人出来完了
                         printf("电梯内要出来的人已全部出来\n");
                         if (QueueEmpty(W[E->Floor])) {//门外人进来完了
-                            if (E->Action[2] == -1) {//此时无人进出，准备关门
+                            if (E->Action[2] == -1&&E->Action[3]!=-1) {//此时无人进出，准备关门 有人进出的40t计时的剩余部分会直接在这部分继续
                                 E->Action[1] = 5;
                                 E->Action[2] = DoorOperTime * t;
                                 E->Action[2] -= t;
                                 printf("door is closing.Time:%d\n", *Time);
-                                E->CallCar[E->Floor]=0;
-                                But->CallDown[E->Floor]=0;
-                                But->CallUp[E->Floor]=0;
                                 return;
                             } else {
+                                if(E->Action[3]!=-1){
+                                    E->Action[2]=E->Action[3];
+                                    E->Action[3]=-1;
+                                }
                                 if (E->Action[2] == t) {//门已关上
                                     E->Action[0] = 5;
                                     E->Action[2] = -1;
@@ -248,7 +238,6 @@ void ElevatorProcess(Queue **W,Elevator *E,Button *But,int *Time){
                             return;
                         }
                     }
-                }
                 break;
             case 5:
                     for(i=0;i<FloorNum;i++){

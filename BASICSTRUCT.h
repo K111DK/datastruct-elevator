@@ -6,19 +6,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #define t 1//单位时间
-#define T 500//总模拟时间
+#define T 5000//总模拟时间
 enum {GoingUp=1,GoingDown=2,Idle=3,GoingBack=4};//电梯的三种状态
 #define Maxsize 500//电梯最大载客量及各层最大排队人数
 #define FloorNum 5//楼层数
-#define MaxInterTime 3
-#define DoorOperTime 3
-#define InOutTime 3
-#define AccerlerTime 4
-#define deccerlerTime 4
-#define UpingTime 5
-#define DowningTime 6
-#define IdleTime 3
-#define DetectTime 4
+#define MaxInterTime 80
+#define DoorOperTime 20
+#define InOutTime 25
+#define AccerlerTime 14
+#define deccerlerTime 14
+#define UpingTime 50
+#define DowningTime 60
+#define IdleTime 300
+#define DetectTime 40
 typedef struct TimeLine{
     struct TimeLine *next;
     int time;
