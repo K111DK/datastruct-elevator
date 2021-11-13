@@ -19,6 +19,7 @@ enum {GoingUp=1,GoingDown=2,Idle=3,GoingBack=4};//电梯的三种状态
 #define DowningTime 60
 #define IdleTime 300
 #define DetectTime 40
+#define WaitingTime 20
 typedef struct TimeLine{
     struct TimeLine *next;
     int time;
@@ -55,7 +56,7 @@ typedef struct Elevator{//电梯
     int State;//电梯运行状态
     int Floor;//电梯所在楼层
     int D1;//有人出入为1
-    int D2;//滞留
+    int D2;//关门
     int D3;//无人进出且门开为1
     int Action[4];//代表电梯各个活动及活动计时器
 }Elevator;

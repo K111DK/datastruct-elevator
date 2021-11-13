@@ -38,8 +38,22 @@ int main(){
         PeopleProcess(WaitingQue,E,But,To,Time);
         ElevatorProcess(WaitingQue,E,But,Time);
         //ElePrint(E);
-        printf("目标楼层:%d\n", Controller(WaitingQue,E,But,0,Time));
-        printf("E status:%d\n",E->State);
+        printf("运行状态:");
+        switch (E->State) {
+            case 1:
+                printf("向上\n");
+                break;
+            case 2:
+                printf("向下\n");
+                break;
+            case 3:
+                printf("静候\n");
+                break;
+            case 4:
+                printf("返回1层\n");
+                break;
+        }
+        printf(" case:%d 目标楼层:%d\n",E->Action[0] ,Controller(WaitingQue,E,But,0,Time));
         QueuePrint(WaitingQue,But,E);
         TimeLinePrint(To);
         *Time+=1;

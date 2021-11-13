@@ -163,17 +163,20 @@ void ElevatorProcess(Queue **W,Elevator *E,Button *But,int *Time){
 //                } else {
 //                    E->D2 = 0;
 //                }
-                if (!StackEmpty(E->ElePeople[E->Floor])&&!QueueEmpty(W[E->Floor])) {//有人进出时,进行40t计时,当进出状态保持，40t会不断刷新，进出完毕时，40t会直接进入以下倒数状态
+                if (!StackEmpty(E->ElePeople[E->Floor])||!QueueEmpty(W[E->Floor])) {
+                    E->D1=1;//有人进出时,进行40t计时,当进出状态保持，40t会不断刷新，进出完毕时，40t会直接进入以下倒数状态
                     if(E->Action[3]==-1||E->Action[3]==t){
                         E->Action[3]=DetectTime*t;
                     }else{
                         E->Action[3]-=t;
                     }
-                } //无人整蛊，正常出入
+                }
+                //无人整蛊，正常出入
                     if (StackEmpty(E->ElePeople[E->Floor])) {//电梯人出来完了
                         printf("电梯内要出来的人已全部出来\n");
                         if (QueueEmpty(W[E->Floor])) {//门外人进来完了
-                            if (E->Action[2] == -1&&E->Action[3]!=-1) {//此时无人进出，准备关门 有人进出的40t计时的剩余部分会直接在这部分继续
+                            E->D2=1;
+                            if (E->Action[2] == -1&&E->Action[3]==-1) {//此时无人进出，准备关门 有人进出的40t计时的剩余部分会直接在这部分继续
                                 E->Action[1] = 5;
                                 E->Action[2] = DoorOperTime * t;
                                 E->Action[2] -= t;
@@ -190,6 +193,7 @@ void ElevatorProcess(Queue **W,Elevator *E,Button *But,int *Time){
                                     E->CallCar[E->Floor]=0;
                                     But->CallDown[E->Floor]=0;
                                     But->CallUp[E->Floor]=0;
+                                    E->D2==0;
                                     printf("door is closed.Time:%d\n", *Time);
                                     return;
                                 } else {
@@ -199,6 +203,12 @@ void ElevatorProcess(Queue **W,Elevator *E,Button *But,int *Time){
                                 }
                             }
                         } else {//门外还有人进
+                            if(E->D2==1){
+                                E->Action[0]=3;
+                                E->D2=0;
+                                printf("error%d\n",E->Action[2]);
+                                break;
+                            }
                             if (E->Action[2] != -1) {
                                 if (E->Action[2] == t) {//计时完毕
                                     QNode *p;
