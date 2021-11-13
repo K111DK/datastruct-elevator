@@ -19,7 +19,9 @@ enum {GoingUp=1,GoingDown=2,Idle=3,GoingBack=4};//电梯的三种状态
 #define DowningTime 6
 #define IdleTime 30
 #define DetectTime 4
-#define WaitingTime 20
+#define GenDetail 0
+#define EleDetail 1
+#define VisuaLize 0
 typedef struct TimeLine{
     struct TimeLine *next;
     int time;

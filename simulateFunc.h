@@ -21,11 +21,14 @@ Person *PersonRandGenAdd(Queue **W,Button *button,Elevator *E,TimeLine *To,const
 //    printf("INFO:\nGUtime:%f\nITtime:%f\n",a->GivenUpTime,a->InterTime);
     enQueue(W[a->InFloor],a);
     //将随机生成的人加入等待队列
-    printf("新的人No:%d进入第%d层排队队列.Time:%d\n", a->code,a->InFloor,*Time);
-    printf("-----------------\n人物信息:\n最大等待时间:%d\n起始层:%d\n目的层:%d\n下一个人到达时间:%d\n序号:%d\n-----------------\n",a->GivenUpTime,a->InFloor,a->OutFloor,a->InterTime,a->code);
+    printf("新的人No:%d进入第%d层排队队列.\n", a->code, a->InFloor);
+    if(GenDetail){
+        printf("-----------------\n人物信息:\n最大等待时间:%d\n起始层:%d\n目的层:%d\n下一个人到达时间:%d\n序号:%d\n-----------------\n",
+               a->GivenUpTime, a->InFloor, a->OutFloor, a->InterTime, a->code);
+    }
     if(a->InFloor==E->Floor&&(E->Action[0]==3||E->Action[0]==4)){
         a->GivenUpTime=0;
-        printf("电梯就在本层且未离开,No:%d 准备进入电梯.Time:%d\n",a->code,*Time);
+        printf("电梯就在本层且未离开,No:%d 准备进入电梯.\n",a->code);
     }
         E->CallCar[a->InFloor]=1;
         if(a->InFloor>a->OutFloor){
@@ -33,7 +36,7 @@ Person *PersonRandGenAdd(Queue **W,Button *button,Elevator *E,TimeLine *To,const
         }else{
             button->CallUp[a->InFloor]=1;
         }
-        printf("No:%d 按下按钮并在队列中等待.Time:%d\n",a->code,*Time);
+        printf("No:%d 按下按钮并在队列中等待.\n",a->code);
     return a;
 }
 
@@ -117,7 +120,7 @@ void ElevatorProcess(Queue **W,Elevator *E,Button *But,int *Time){
                         break;
                     } else {//否则开始判断目标层
                         E->Action[0] = 6;
-                        printf("准备移动\n:%d", *Time);
+                        printf("准备移动.Time:%d\n", *Time);
                         break;
                     }
                 }
@@ -165,7 +168,10 @@ void ElevatorProcess(Queue **W,Elevator *E,Button *But,int *Time){
                 }
                 break;
             case 4://让人进出
-                if (!StackEmpty(E->ElePeople[E->Floor])||!QueueEmpty(W[E->Floor])) {
+                if (!StackEmpty(E->ElePeople[E->Floor])||!QueueEmpty(W[E->Floor])||(E->Action[2]!=-1&&E->D1==0)) {
+                    if((E->Action[2]!=-1&&E->D1==0)){
+                        E->Action[3]=E->Action[2];
+                    }
                     E->D1=1;//有人进出时,进行40t计时,当进出状态保持，40t会不断刷新，进出完毕时，40t会直接进入以下倒数状态
                     if(E->Action[3]==-1||E->Action[3]==t){
                         E->Action[3]=DetectTime*t;
@@ -207,6 +213,7 @@ void ElevatorProcess(Queue **W,Elevator *E,Button *But,int *Time){
                             }
                         } else {//门外还有人进
                             if(E->D2==1&&E->Action[2]!=-1){
+                                E->Action[3]=E->Action[2]-t;
                                 E->Action[2]=-1;
                                 E->D2=0;
                             }
@@ -262,6 +269,7 @@ void ElevatorProcess(Queue **W,Elevator *E,Button *But,int *Time){
                         printf("正在关门.Time:%d\n", *Time);
                         return;
                     }else if(E->Action[2]==0){
+                        printf("门已关上\n");
                         for(i=0;i<FloorNum;i++){
                             if((But->CallDown[i]||But->CallUp[i]||E->CallCar[i])){
                                 if(i==E->Floor){
@@ -512,12 +520,13 @@ void PeopleProcess(Queue **W,Elevator *E,Button *But,TimeLine *To,int* Time){
 
         }
     }
-    printf("-------------\n");
 }
 void ElePrint(Elevator*E,Queue **W,Button *But,int *Time){
+    if(EleDetail==0){
+        return;
+    }
     int i=0;
     StackNode *p;
-    printf("------------------------------\n");
 //    printf("各层呼叫电梯情况\n");
 //    for(i=0;i<FloorNum;i++){
 //        printf("第%d层:%d\n",i,E->CallCar[i]);
@@ -538,10 +547,12 @@ void ElePrint(Elevator*E,Queue **W,Button *But,int *Time){
             break;
     }
     printf("  Case:%d  现在楼层:%d 目标楼层:%d\n",E->Action[0],E->Floor ,Controller(W,E,But,0,Time));
-    printf("------------------------------\n");
 }
 
 void QueuePrint(Queue**W,Button *button,Elevator *E){
+    if(!VisuaLize){
+        return;
+    }
     int i=0;
     if(W==NULL){
         return;

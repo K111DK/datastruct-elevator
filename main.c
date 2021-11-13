@@ -34,12 +34,14 @@ int main(){
     Init(But,WaitingQue,E);//初始化系统
     PersonRandGenAdd(WaitingQue,But,E,To,Time);//随机加入第一个人
     while(*Time!=T){
+        *Time+=1;
+        printf("\n--------------------------\n时间:%d\n");
         srand((unsigned int)*(Time));//*time(NULL)
         ElevatorProcess(WaitingQue,E,But,Time);
         ElePrint(E,WaitingQue,But,Time);
         PeopleProcess(WaitingQue,E,But,To,Time);
-        //QueuePrint(WaitingQue,But,E);
+        QueuePrint(WaitingQue,But,E);
         TimeLinePrint(To);
-        *Time+=1;
+        printf("\n--------------------------\n");
     }
 }
