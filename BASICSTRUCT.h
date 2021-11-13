@@ -34,8 +34,9 @@ typedef struct  Person{
     int InFloor;
     int OutFloor;
     int GivenUpTime;
-   int InterTime;
-   int code;
+    int InterTime;
+    int code;
+    int flag[2];
 }Person;
 
 typedef  struct StackNode{
@@ -268,54 +269,4 @@ int QueueSize(Queue*queue){
         return i;
     }
 }
-void ElePrint(Elevator*E){
-    int i=0;
-    StackNode *p;
-    printf("-------------\n");
-    for(i=0;i<FloorNum;i++){
-        printf("要去第%d层的人有%d个\n", i,StackSize(E->ElePeople[i]));
-        if(!StackEmpty(E->ElePeople[i])){
-            p=E->ElePeople[i]->top;
-            while(p->next) {
-                printf("No:%d   ", p->data->code);
-                p = p->next;
-            }
-
-        }
-        printf("\n-------------\n");
-    }
-    printf("----------\n");
-    printf("各层呼叫电梯情况\n");
-    for(i=0;i<FloorNum;i++){
-        printf("第%d层:%d\n",i,E->CallCar[i]);
-    }
-    printf("----------\n");
-}
-
-void QueuePrint(Queue**W,Button *button,Elevator *E){
-    int i=0;
-    if(W==NULL){
-        return;
-    }
-    int floor=E->Floor;
-    printf("\n------------------------------------\n");
-    printf("层数  电梯位置  按钮情况  排队情况(从左到右为队头到队尾)\n");
-    printf("------------------------------------\n");
-    for(i=FloorNum-1;i>=0;i--){
-        if(floor==i){
-            printf("%d   | ***** |按 |上:%d |第%d层的排队队列有:%d人\n    | ***** |钮 |下:%d |",i,button->CallUp[i],i, QueueSize(W[i]),button->CallDown[i]);
-        }else{
-            printf("%d   |       |按 |上:%d |第%d层的排队队列有:%d人\n    |       |钮 |下:%d |",i,button->CallUp[i],i, QueueSize(W[i]),button->CallDown[i]);
-        }
-        QNode *p=W[i]->front->next;
-        if(p){
-        while(p){
-            printf("No:%d   ", p->data->code);
-            p = p->next;
-        }
-        }
-        printf("\n------------------------------------\n");
-    }
-}
-
 #endif //MAIN_C_BASICSTRUCT_H

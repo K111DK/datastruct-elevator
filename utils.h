@@ -11,5 +11,4 @@ int GenRand(int a){//产生范围为0~a的随机整数
     return rand()%a+1;
 }
 
-
 #endif //MAIN_C_UTILS_H
