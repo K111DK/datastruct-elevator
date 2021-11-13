@@ -6,19 +6,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #define t 1//单位时间
-#define T 5000//总模拟时间
+#define T 500//总模拟时间
 enum {GoingUp=1,GoingDown=2,Idle=3,GoingBack=4};//电梯的三种状态
 #define Maxsize 500//电梯最大载客量及各层最大排队人数
 #define FloorNum 5//楼层数
-#define MaxInterTime 80
-#define DoorOperTime 20
-#define InOutTime 25
-#define AccerlerTime 14
-#define deccerlerTime 14
-#define UpingTime 50
-#define DowningTime 60
-#define IdleTime 300
-#define DetectTime 40
+#define MaxInterTime 20
+#define DoorOperTime 4
+#define InOutTime 4
+#define AccerlerTime 4
+#define deccerlerTime 4
+#define UpingTime 5
+#define DowningTime 6
+#define IdleTime 30
+#define DetectTime 4
 #define WaitingTime 20
 typedef struct TimeLine{
     struct TimeLine *next;
@@ -224,12 +224,12 @@ QNode *DeQueue(Queue*queue){
     QNode * p=queue->front->next;
     queue->front->next=p->next;
     if (queue->rear==p) {
-        queue->front=queue->rear;
+        queue->rear=queue->front;
     }
     return p;
 }
 void DeletQueNode(Queue*queue,QNode*node){
-    if(queue->rear==queue->front){//队列为空
+    if(queue->rear==queue->front||node==NULL){//队列为空
         exit(0);
     }
     QNode *temp;
@@ -238,14 +238,14 @@ void DeletQueNode(Queue*queue,QNode*node){
         temp=temp->next;
     }
     if(node->next==NULL){//只有1个结点
-        queue->front=queue->rear;
+        queue->rear=queue->front;
         queue->rear->next=NULL;
         return;
     }
     temp->next=temp->next->next;
 }
 int QueueEmpty(Queue*queue){
-    if(queue->rear==queue->front){
+    if(queue->rear==queue->front||queue->front->next==NULL){
         return 1;
     }else{
         return 0;

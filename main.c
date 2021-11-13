@@ -37,7 +37,7 @@ int main(){
         srand((unsigned int)*(Time));//*time(NULL)
         PeopleProcess(WaitingQue,E,But,To,Time);
         ElevatorProcess(WaitingQue,E,But,Time);
-        //ElePrint(E);
+        ElePrint(E);
         printf("运行状态:");
         switch (E->State) {
             case 1:
@@ -53,7 +53,7 @@ int main(){
                 printf("返回1层\n");
                 break;
         }
-        printf(" case:%d 目标楼层:%d\n",E->Action[0] ,Controller(WaitingQue,E,But,0,Time));
+        printf("case:%d  目标楼层:%d\n",E->Action[0] ,Controller(WaitingQue,E,But,0,Time));
         QueuePrint(WaitingQue,But,E);
         TimeLinePrint(To);
         *Time+=1;
