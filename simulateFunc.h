@@ -7,6 +7,17 @@
 int IfOverCross(Button *B,Elevator *E);
 Person *PersonRandGenAdd(Queue **W,Button *button,Elevator **E,TimeLine *To,const int * Time){//（伪）随机地生成一个人加入到队列
     Person *a;
+    if(*Time==0&&EXAMPLE){
+        a=(Person*)malloc(sizeof (Person));
+        a->GivenUpTime= GenRand(100)*t+40*t;
+        a->InFloor = 1;
+        a->OutFloor = 4;
+        a->InterTime = 1000*t;
+        a->code=*Time;
+        a->flag[0]=0;
+        a->flag[1]=-1;
+        InsertTime(To,a->InterTime);
+    }else{
     a=(Person*)malloc(sizeof (Person));
     a->GivenUpTime= GenRand(100)*t+40*t;
     a->InFloor = GenRand(FloorNum)-1;
@@ -16,6 +27,7 @@ Person *PersonRandGenAdd(Queue **W,Button *button,Elevator **E,TimeLine *To,cons
     a->flag[0]=0;
     a->flag[1]=-1;
     InsertTime(To,a->InterTime);
+    }
     while (a->OutFloor==a->InFloor){
         a->OutFloor = GenRand(FloorNum)-1;
     }
@@ -235,7 +247,7 @@ void ElevatorProcess(Queue **W,Elevator **Ele,Button *But,int *Time,int ele){
                 //无人整蛊，正常出入
                     if (StackEmpty(E->ElePeople[E->Floor])) {//电梯人出来完了
                         printf("电梯内要出来的人已全部出来\n");
-                        if (QueueEmpty(W[E->Floor])|| (QueueSize(W[E->Floor])==1&&W[E->Floor]->front->next->data->flag[1]==1-ele)){//门外人进来完了
+                        if (QueueEmpty(W[E->Floor])||(QueueSize(W[E->Floor])==1&&W[E->Floor]->front->next->data->flag[1]==1-ele)){//门外人进来完了
                             E->D2=1;
                             if (E->Action[2] == -1&&E->Action[3]==-1) {//此时无人进出，准备关门 有人进出的40t计时的剩余部分会直接在这部分继续
                                 E->Action[1] = 5;
@@ -299,6 +311,15 @@ void ElevatorProcess(Queue **W,Elevator **Ele,Button *But,int *Time,int ele){
                                 E->Action[2] = InOutTime * t;
                                 E->Action[2] -= t;
                                 return;}
+                                else{
+                                    Wnode=Wnode->next;
+                                    Wnode->data->flag[0]=1;
+                                    Wnode->data->flag[1]=ele;
+                                    printf("No:%d正在进入电梯%d.Time:%d\n",Wnode->data->code,ele,*Time);
+                                    E->Action[2] = InOutTime * t;
+                                    E->Action[2] -= t;
+                                    return;
+                                }
                                 }
                         }
                     } else {//有人出
@@ -531,8 +552,7 @@ void PeopleProcess(Queue **W,Elevator **Ele,Button *But,TimeLine *To,int* Time){
     int i;
     int j;
     Elevator *E;
-    for(j=0;j<2;j++){
-        E=Ele[j];
+
     printf("各楼层人群:\n");
     for(i=0;i<FloorNum;i++){
         QNode *node;
@@ -542,13 +562,17 @@ void PeopleProcess(Queue **W,Elevator **Ele,Button *But,TimeLine *To,int* Time){
             if(node->data==NULL)break;
             switch (node->data->flag[0]) {
                 case 1:
-                    printf("No:%d正在进入电梯.Time:%d\n",node->data->code ,*Time);break;
+                    printf("No:%d正在进入电梯%d.Time:%d\n",node->data->code,node->data->flag[1] ,*Time);break;
                 case -1:
-                    printf("No:%d已经进入电梯.Time:%d\n",node->data->code ,*Time);break;
+                    printf("No:%d已经进入电梯%d.Time:%d\n",node->data->code,node->data->flag[1],*Time);break;
                 default:
-                    if(node->data->InFloor==E->Floor&&(E->Action[0]==4||E->Action[0]==3||E->Action[0]==1)){
+                    if(node->data->InFloor==Ele[0]->Floor&&(Ele[0]->Action[0]==4||Ele[0]->Action[0]==3||Ele[0]->Action[0]==1)){
                         node->data->GivenUpTime=0;
-                        printf("No:%d准备进入电梯.Time:%d\n",node->data->code ,*Time);
+                        printf("No:%d准备进入电梯0.Time:%d\n",node->data->code ,*Time);
+                        break;
+                    }else if(node->data->InFloor==Ele[1]->Floor&&(Ele[1]->Action[0]==4||Ele[1]->Action[0]==3||Ele[1]->Action[0]==1)){
+                        node->data->GivenUpTime=0;
+                        printf("No:%d准备进入电梯1.Time:%d\n",node->data->code ,*Time);
                         break;
                     }else{
                         if(node->data->GivenUpTime==t){
@@ -568,6 +592,8 @@ void PeopleProcess(Queue **W,Elevator **Ele,Button *But,TimeLine *To,int* Time){
         PersonRandGenAdd(W,But,Ele,To,Time);
     }
     printf("电梯内人群情况:\n");
+    for(j=0;j<2;j++){
+        E=Ele[j];
     StackNode *p;
     for(i=0;i<FloorNum;i++){
         if(!StackEmpty(E->ElePeople[i])){
