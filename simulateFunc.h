@@ -110,7 +110,7 @@ int Controller(Queue **W,Elevator **Ele,Button *But,int ele,int *Time){
 }
 
 int TotalCall(Button*But){
-    int num;
+    int num=0;
     int i=0;
     for(i=0;i<FloorNum;i++){
         if(But->CallUp[i]||But->CallDown[i]){
@@ -160,6 +160,7 @@ void ElevatorProcess(Queue **W,Elevator **Ele,Button *But,int *Time,int ele){
             case 1://一楼等待
             if(ele==1){
                 if(TotalCall(But)<=1||!IfOverCross(But,Ele[1-ele])){
+                    printf("%d",TotalCall(But)<=1||!IfOverCross(But,Ele[1-ele]));
                     return;
                 }
                 }
@@ -234,7 +235,7 @@ void ElevatorProcess(Queue **W,Elevator **Ele,Button *But,int *Time,int ele){
                 //无人整蛊，正常出入
                     if (StackEmpty(E->ElePeople[E->Floor])) {//电梯人出来完了
                         printf("电梯内要出来的人已全部出来\n");
-                        if (QueueEmpty(W[E->Floor])||(QueueSize(W[E->Floor])<=1&&Ele[1-ele]->Floor==E->Floor)) {//门外人进来完了
+                        if (QueueEmpty(W[E->Floor])|| (QueueSize(W[E->Floor])==1&&W[E->Floor]->front->next->data->flag[1]==1-ele)){//门外人进来完了
                             E->D2=1;
                             if (E->Action[2] == -1&&E->Action[3]==-1) {//此时无人进出，准备关门 有人进出的40t计时的剩余部分会直接在这部分继续
                                 E->Action[1] = 5;
@@ -272,8 +273,9 @@ void ElevatorProcess(Queue **W,Elevator **Ele,Button *But,int *Time,int ele){
                             if (E->Action[2] != -1) {
                                 if (E->Action[2] == t) {//计时完毕
                                     QNode *p;
-                                    p = DeQueue(W[E->Floor]);//当层人出队
+                                    //当层人出队
                                     printf("队头:No:%d",W[E->Floor]->front->next->data->code);
+                                    p = DeQueue(W[E->Floor]);
                                     E->CallCar[p->data->OutFloor]=1;//电梯内目标楼层按钮按下
                                     Push(E->ElePeople[p->data->OutFloor], p->data);//把人压入电梯中
                                     printf("No:%d已进入电梯%d.Time:%d\n",p->data->code,ele,*Time);
@@ -287,17 +289,17 @@ void ElevatorProcess(Queue **W,Elevator **Ele,Button *But,int *Time,int ele){
                                     return;
                                 }
                             } else {//进门初态25t为周期开始计时
-                                QNode *q=W[E->Floor]->front->next;
-                                if(q->data->flag[1]!=-1){
-                                    q=q->next;
-                                }
-                                q->data->flag[0]=1;
-                                q->data->flag[1]=ele;
-                                printf("No:%d正在进入电梯%d.Time:%d\n",q->data->code,ele,*Time);
+                                QueueEmpty(W[E->Floor]);
+                                QNode *Wnode;
+                                Wnode=W[E->Floor]->front->next;
+                                if(Wnode->data->flag[1]!=1-ele){
+                                Wnode->data->flag[0]=1;
+                                Wnode->data->flag[1]=ele;
+                                printf("No:%d正在进入电梯%d.Time:%d\n",Wnode->data->code,ele,*Time);
                                 E->Action[2] = InOutTime * t;
                                 E->Action[2] -= t;
-                                return;
-                            }
+                                return;}
+                                }
                         }
                     } else {//有人出
                         if (E->Action[2] != -1) {//非计时状态，对下一个人进行计时
