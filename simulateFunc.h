@@ -4,7 +4,7 @@
 #ifndef MAIN_C_SIMULATEFUNC_H
 #define MAIN_C_SIMULATEFUNC_H
 #include "BASICSTRUCT.h"
-
+int IfOverCross(Button *B,Elevator *E);
 Person *PersonRandGenAdd(Queue **W,Button *button,Elevator **E,TimeLine *To,const int * Time){//（伪）随机地生成一个人加入到队列
     Person *a;
     a=(Person*)malloc(sizeof (Person));
@@ -125,7 +125,7 @@ int IfOverCross(Button*But,Elevator*E){
     if(E->State==GoingUp){
         for(i=E->Floor;i>=0;i--){
             if((But->CallDown[i]||But->CallUp[i])){
-                if(i==E->Floor&&(E->Action[0]!=7||E->Action[0]!=8)){
+                if(i==E->Floor&&(E->Action[0]<=5)){
                     break;
                 }else{
                     return 1;
@@ -135,7 +135,7 @@ int IfOverCross(Button*But,Elevator*E){
     }else if(E->State==GoingDown){
         for(i=E->Floor;i<FloorNum;i++){
             if((But->CallDown[i]||But->CallUp[i])){
-                if(i==E->Floor&&(E->Action[0]!=7||E->Action[0]!=8)){
+                if(i==E->Floor&&(E->Action[0]<=5)){
                     break;
                 }else{
                     return 1;
@@ -154,14 +154,15 @@ void ElevatorProcess(Queue **W,Elevator **Ele,Button *But,int *Time,int ele){
     int i=0;
     Elevator *E;
     E=Ele[ele];
+    printf("ele:%d   totalcall:%d   ifovercross:%d\n",ele,TotalCall(But),IfOverCross(But,Ele[1-ele]));
     while(1) {
         switch (E->Action[0]) {
             case 1://一楼等待
             if(ele==1){
-                if(!IfOverCross(But,Ele[1-ele])|| TotalCall(But)<=1){
+                if(TotalCall(But)<=1||!IfOverCross(But,Ele[1-ele])){
                     return;
                 }
-            }
+                }
                 printf("电梯在1楼等待.Time:%d\n", *Time);
                 f= Controller(W,Ele,But,ele,Time);
                 if(f!=-1) {
@@ -233,7 +234,7 @@ void ElevatorProcess(Queue **W,Elevator **Ele,Button *But,int *Time,int ele){
                 //无人整蛊，正常出入
                     if (StackEmpty(E->ElePeople[E->Floor])) {//电梯人出来完了
                         printf("电梯内要出来的人已全部出来\n");
-                        if (QueueEmpty(W[E->Floor])||(QueueSize(W[E->Floor])==1&&Ele[1-ele]->Floor==E->Floor)) {//门外人进来完了
+                        if (QueueEmpty(W[E->Floor])||(QueueSize(W[E->Floor])<=1&&Ele[1-ele]->Floor==E->Floor)) {//门外人进来完了
                             E->D2=1;
                             if (E->Action[2] == -1&&E->Action[3]==-1) {//此时无人进出，准备关门 有人进出的40t计时的剩余部分会直接在这部分继续
                                 E->Action[1] = 5;
