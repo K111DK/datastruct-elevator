@@ -609,7 +609,7 @@ void PeopleProcess(Queue **W,Elevator **Ele,Button *But,TimeLine *To,int* Time,c
         }
     }
     if(DeletTime(To)==1){
-        PersonRandGenAdd(W,But,Ele,To,Time);
+        PersonRandGenAdd(W,But,Ele,To,Time,logger);
     }
     printf("电梯内人群情况:\n");
     for(j=0;j<2;j++){
@@ -620,7 +620,7 @@ void PeopleProcess(Queue **W,Elevator **Ele,Button *But,TimeLine *To,int* Time,c
         if(!StackEmpty(E->ElePeople[i])){
             p=E->ElePeople[i]->top;
             while(p->next) {
-                printf("No:%d 目标层:%d ", p->data->code,p->data->OutFloor);
+                logger+=("No:%d 目标层:%d ", p->data->code,p->data->OutFloor);
                 if(p->data->flag[0]==-1){
                     printf("状态:电梯内等待\n");
                 }else if(p->data->flag[0]==2){
@@ -665,7 +665,7 @@ void ElePrint(Elevator**E,Queue **W,Button *But,int *Time,char*logger){
     }
 }
 
-void QueuePrint(Queue**W,Button *button,Elevator **E,char*logger){
+void QueuePrint(Queue**W,Button *button,Elevator **E,char *logger){
     if(!VisuaLize){
         return;
     }
@@ -675,27 +675,27 @@ void QueuePrint(Queue**W,Button *button,Elevator **E,char*logger){
     }
     int floor0=E[0]->Floor;
     int floor1=E[1]->Floor;
-    printf("------------------------------------\n");
-    printf("层数   电梯0    电梯1   按钮情况   排队情况(从左到右为队头到队尾)\n");
-    printf("------------------------------------\n");
+    sprintf(logger,"%s------------------------------------\n",logger);
+    sprintf(logger,"%s层数   电梯0    电梯1   按钮情况   排队情况(从左到右为队头到队尾)\n",logger);
+    sprintf(logger,"%s------------------------------------\n",logger);
     for(i=FloorNum-1;i>=0;i--){
         if(floor0==i&&floor1==i){
-            printf("%d   | ***** | ***** |按 |上:%d |第%d层的排队队列有:%d人\n    | ***** | ***** |钮 |下:%d |",i,button->CallUp[i],i, QueueSize(W[i]),button->CallDown[i]);
+            sprintf(logger,"%s%d   | ***** | ***** |按 |上:%d |第%d层的排队队列有:%d人\n    | ***** | ***** |钮 |下:%d |",logger,i,button->CallUp[i],i, QueueSize(W[i]),button->CallDown[i]);
         }else if(floor1==i){
-            printf("%d   |       | ***** |按 |上:%d |第%d层的排队队列有:%d人\n    |       | ***** |钮 |下:%d |",i,button->CallUp[i],i, QueueSize(W[i]),button->CallDown[i]);
+            sprintf(logger,"%s%d   |       | ***** |按 |上:%d |第%d层的排队队列有:%d人\n    |       | ***** |钮 |下:%d |",logger,i,button->CallUp[i],i, QueueSize(W[i]),button->CallDown[i]);
         }else if(floor0==i){
-            printf("%d   | ***** |       |按 |上:%d |第%d层的排队队列有:%d人\n    | ***** |       |钮 |下:%d |",i,button->CallUp[i],i, QueueSize(W[i]),button->CallDown[i]);
+            sprintf(logger,"%s%d   | ***** |       |按 |上:%d |第%d层的排队队列有:%d人\n    | ***** |       |钮 |下:%d |",logger,i,button->CallUp[i],i, QueueSize(W[i]),button->CallDown[i]);
         }else{
-            printf("%d   |       |       |按 |上:%d |第%d层的排队队列有:%d人\n    |       |       |钮 |下:%d |",i,button->CallUp[i],i, QueueSize(W[i]),button->CallDown[i]);
+            sprintf(logger,"%s%d   |       |       |按 |上:%d |第%d层的排队队列有:%d人\n    |       |       |钮 |下:%d |",logger,i,button->CallUp[i],i, QueueSize(W[i]),button->CallDown[i]);
         }
         QNode *p=W[i]->front->next;
         if(p){
             while(p){
-                printf("No:%d   ", p->data->code);
+                sprintf(logger,"%sNo:%d   ",logger, p->data->code);
                 p = p->next;
             }
         }
-        printf("\n------------------------------------\n");
+        sprintf(logger,"%s\n------------------------------------\n",logger);
     }
 }
 #endif //MAIN_C_SIMULATEFUNC_H
