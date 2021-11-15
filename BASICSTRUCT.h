@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #define t 1//单位时间
-#define T 1000//总模拟时间
+#define T 10000//总模拟时间
 enum {GoingUp=1,GoingDown=2,Idle=3,GoingBack=4};//电梯的三种状态
 #define Maxsize 500//电梯最大载客量及各层最大排队人数
 #define FloorNum 5//楼层数
@@ -22,8 +22,15 @@ enum {GoingUp=1,GoingDown=2,Idle=3,GoingBack=4};//电梯的三种状态
 #define GenDetail 0
 #define EleDetail 1
 #define VisuaLize 1
-#define EXAMPLE 1
-#define DoubleEle 0
+#define EXAMPLE 0
+#define DoubleEle 1
+typedef struct Logger{
+    int time;
+    struct Logger *next;
+    struct Logger *pre;
+    char *info;
+}Logger;
+
 
 typedef struct TimeLine{
     struct TimeLine *next;
