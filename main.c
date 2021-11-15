@@ -18,7 +18,8 @@ void Init(Button *But,Queue **W,Elevator **E){
             E[j]->ElePeople[i]=InitStack();
             E[j]->CallCar[i]=0;
         }
-        E[j]->D1=E[j]->D2=E[j]->D3=0;
+        E[j]->D1=-1;
+        E[j]->D2=E[j]->D3=0;
         E[j]->Floor=1;
         E[j]->State=Idle;
         E[j]->Action[0]=1;
@@ -48,6 +49,6 @@ int main(){
         PeopleProcess(WaitingQue,E,But,To,Time);
         QueuePrint(WaitingQue,But,E);
         TimeLinePrint(To);
-        printf("\n--------------------------\n");
+        printf("--------------------------\n");
     }
 }
