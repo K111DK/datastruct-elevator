@@ -30,6 +30,9 @@ void Init(Button *But,Queue **W,Elevator **E){
 }
 
 int main(){
+    char EleLogger[T][50];
+    char PersonLogger[T][100];
+    char VisualLogger[T][500];
     int *Time=(int*) malloc(sizeof (int));
     *Time=0;
     TimeLine *To=(TimeLine*) malloc(sizeof (TimeLine));
@@ -43,12 +46,13 @@ int main(){
         *Time+=1;
         printf("\n--------------------------\n时间:%d\n",*Time);
         srand((unsigned int)*(Time));//*time(NULL)
-        ElevatorProcess(WaitingQue,E,But,Time,0);
-        ElevatorProcess(WaitingQue,E,But,Time,1);
-        ElePrint(E,WaitingQue,But,Time);
-        PeopleProcess(WaitingQue,E,But,To,Time);
-        QueuePrint(WaitingQue,But,E);
+        ElevatorProcess(WaitingQue,E,But,Time,0,EleLogger);
+        ElevatorProcess(WaitingQue,E,But,Time,1),EleLogger;
+        PeopleProcess(WaitingQue,E,But,To,Time,PersonLogger);
+        QueuePrint(WaitingQue,But,E,VisualLogger[*Time]);
         TimeLinePrint(To);
         printf("--------------------------\n");
+        ElePrint(E,WaitingQue,But,Time);
+        system("cls");
     }
 }

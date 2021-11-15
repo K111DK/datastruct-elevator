@@ -5,7 +5,7 @@
 #define MAIN_C_SIMULATEFUNC_H
 #include "BASICSTRUCT.h"
 int IfOverCross(Button *B,Elevator *E);
-Person *PersonRandGenAdd(Queue **W,Button *button,Elevator **E,TimeLine *To,const int * Time){//（伪）随机地生成一个人加入到队列
+Person *PersonRandGenAdd(Queue **W,Button *button,Elevator **E,TimeLine *To,const int * Time,char *logger){//（伪）随机地生成一个人加入到队列
     Person *a;
     if(*Time==0&&EXAMPLE){
         a=(Person*)malloc(sizeof (Person));
@@ -168,7 +168,7 @@ int IfOverCross(Button*But,Elevator*E){
 }
 
 
-void ElevatorProcess(Queue **W,Elevator **Ele,Button *But,int *Time,int ele){
+void ElevatorProcess(Queue **W,Elevator **Ele,Button *But,int *Time,int ele,char *logger){
     int f=0;
     int i=0;
     Elevator *E;
@@ -568,7 +568,7 @@ void ElevatorProcess(Queue **W,Elevator **Ele,Button *But,int *Time,int ele){
     }
 }
 
-void PeopleProcess(Queue **W,Elevator **Ele,Button *But,TimeLine *To,int* Time){
+void PeopleProcess(Queue **W,Elevator **Ele,Button *But,TimeLine *To,int* Time,char*logger){
     int i;
     int j;
     Elevator *E;
@@ -634,7 +634,7 @@ void PeopleProcess(Queue **W,Elevator **Ele,Button *But,TimeLine *To,int* Time){
     }
     }
 }
-void ElePrint(Elevator**E,Queue **W,Button *But,int *Time){
+void ElePrint(Elevator**E,Queue **W,Button *But,int *Time,char*logger){
     if(EleDetail==0){
         return;
     }
@@ -645,7 +645,6 @@ void ElePrint(Elevator**E,Queue **W,Button *But,int *Time){
 //    for(i=0;i<FloorNum;i++){
 //        printf("第%d层:%d\n",i,E->CallCar[i]);
 //    }
-
     for(ele=0;ele<2;ele++){
         printf("电梯%d运行状态:",ele);
     switch (E[ele]->State) {
@@ -662,11 +661,11 @@ void ElePrint(Elevator**E,Queue **W,Button *But,int *Time){
             printf("返回1层");
             break;
     }
-    printf("  Case:%d  现在楼层:%d 目标楼层:%d 计时器状态:%d 3%d\n",E[ele]->Action[0],E[ele]->Floor ,Controller(W,E,But,ele,Time),E[ele]->Action[2],E[ele]->Action[3]);
+    printf("  Case:%d  现在楼层:%d 目标楼层:%d 计时器状态:%d\n",E[ele]->Action[0],E[ele]->Floor ,Controller(W,E,But,ele,Time),E[ele]->Action[2]);
     }
 }
 
-void QueuePrint(Queue**W,Button *button,Elevator **E){
+void QueuePrint(Queue**W,Button *button,Elevator **E,char*logger){
     if(!VisuaLize){
         return;
     }
@@ -677,7 +676,7 @@ void QueuePrint(Queue**W,Button *button,Elevator **E){
     int floor0=E[0]->Floor;
     int floor1=E[1]->Floor;
     printf("------------------------------------\n");
-    printf("层数  电梯位置  按钮情况  排队情况(从左到右为队头到队尾)\n");
+    printf("层数   电梯0    电梯1   按钮情况   排队情况(从左到右为队头到队尾)\n");
     printf("------------------------------------\n");
     for(i=FloorNum-1;i>=0;i--){
         if(floor0==i&&floor1==i){

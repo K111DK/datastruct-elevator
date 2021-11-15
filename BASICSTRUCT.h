@@ -25,12 +25,38 @@ enum {GoingUp=1,GoingDown=2,Idle=3,GoingBack=4};//电梯的三种状态
 #define EXAMPLE 0
 #define DoubleEle 1
 typedef struct Logger{
-    int time;
-    struct Logger *next;
-    struct Logger *pre;
-    char *info;
+    char log[10000][500];
 }Logger;
-
+//void LogInfo(Logger*logger,const char *info){
+//
+//}
+//void save(Logger*logger)//保存学生信息
+//{
+//    FILE*fp;
+//    if((fp=fopen("info.txt","wb"))==NULL)exit(0);
+//        fwrite(logger,sizeof(Logger),1,fp);
+//    fclose(fp);
+//}
+//Logger *LoadLog(void)
+//{
+//    Logger *head,*temp,*temp1;
+//    temp=(Logger *)malloc(sizeof(Logger));
+//    head=temp;
+//    temp1=temp;
+//    FILE*fp;
+//    if((fp=fopen("info.txt","rb"))==NULL)exit(0);
+//    for(;!feof(fp);temp=temp->next)
+//    {
+//        fread(temp,sizeof(Logger),1,fp);
+//        temp->next=(Logger *)malloc(sizeof(Logger));
+//        temp1=temp;
+//    }
+//    temp1->next=NULL;
+//    for(temp=head;temp->next!=NULL;temp=temp->next)temp1=temp;
+//    temp1->next=NULL;
+//    fclose(fp);
+//    return head;
+//}
 
 typedef struct TimeLine{
     struct TimeLine *next;
