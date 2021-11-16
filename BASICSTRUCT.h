@@ -5,8 +5,11 @@
 #define MAIN_C_BASICSTRUCT_H
 #include <stdio.h>
 #include <stdlib.h>
+#include "windows.h"
+#include "time.h"
+#include "string.h"
 #define t 1//单位时间
-#define T 1000//总模拟时间
+#define T 5000//总模拟时间
 enum {GoingUp=1,GoingDown=2,Idle=3,GoingBack=4};//电梯的三种状态
 #define Maxsize 500//电梯最大载客量及各层最大排队人数
 #define FloorNum 5//楼层数
@@ -24,9 +27,9 @@ enum {GoingUp=1,GoingDown=2,Idle=3,GoingBack=4};//电梯的三种状态
 #define VisuaLize 1
 #define EXAMPLE 0
 #define DoubleEle 1
-typedef struct Logger{
-    char log[10000][500];
-}Logger;
+char EleLogger[T][500];
+char PersonLogger[T][1000];
+char VisualLogger[T][1000];
 //void LogInfo(Logger*logger,const char *info){
 //
 //}
@@ -132,13 +135,13 @@ void InsertTime(TimeLine *time,int tic){
     }
 }
 
-void TimeLinePrint(TimeLine* To){
+void TimeLinePrint(TimeLine* To,char *logger){
     if(To->next==NULL&&To->time==-1){
         return;
     }else{
         TimeLine * Node=To;
         while(Node){
-            printf("下一个人将在:%d个单位时间后加入排队队列\n",Node->time);
+            sprintf(logger,"%s下一个人将在:%d个单位时间后加入排队队列\n",logger,Node->time);
             Node=Node->next;
         }
         return;
