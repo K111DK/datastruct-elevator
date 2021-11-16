@@ -184,19 +184,24 @@ void ElevatorProcess(Queue **W,Elevator **Ele,Button *But,int *Time,int ele,char
                     }
                 }
                 sprintf(logger,"%s电梯%d在1楼等待.Time:%d\n",logger,ele, *Time);
-                f= Controller(W,Ele,But,ele,Time);
-                if(f!=-1) {
+                for(f=0;f<FloorNum;f++){
+                    if(But->CallDown[f]||But->CallUp[f]||E->CallCar[f]){
+                        break;
+                    }
+                }
+                if(f!=FloorNum) {
                     if (E->Floor == f) {//若在第一层则直接开门
                         E->Action[0] = 3;
-                        sprintf(logger,"%s电梯:%d准备开门.Time:%d\n",logger,ele,*Time);
+                        sprintf(logger,"%s电梯:%d准备开门%d.Time:%d\n",logger,ele,f,*Time);
                         break;
                     } else {//否则开始判断目标层
                         E->Action[0] = 6;
                         sprintf(logger,"%s电梯:%d准备移动.Time:%d\n",logger,ele, *Time);
                         break;
                     }
+                }else {
+                    return;
                 }
-                return;
             case 2:
                 if(E->State==GoingUp){//到达最高层换方向
                     if(E->Floor==FloorNum-1){
@@ -241,53 +246,38 @@ void ElevatorProcess(Queue **W,Elevator **Ele,Button *But,int *Time,int ele,char
                 }
                 break;
             case 4://让人进出
-                if (!StackEmpty(E->ElePeople[E->Floor])||!QueueEmpty(W[E->Floor])||(E->Action[2]!=-1&&E->D1==0)) {
-                    if((E->Action[2]!=-1&&E->D1==0)){
-                        E->Action[3]=E->Action[2];
-                    }
-                    if(!StackEmpty(E->ElePeople[E->Floor])||!QueueEmpty(W[E->Floor]))E->D1=1;//有人进出时,进行40t计时,当进出状态保持，40t会不断刷新，进出完毕时，40t会直接进入以下倒数状态
-                    if(E->Action[3]==-1||E->Action[3]==t){
-                        E->Action[3]=DetectTime*t;
-                    }else{
-                        E->Action[3]-=t;
-                    }
+            if(E->D1==1)E->D1=0;
+                if(E->Action[3]==-1){
+                    E->Action[3]=DetectTime*t;
+                    E->Action[3]-=t;
+                }else if(E->Action[3]==t){
+                    E->Action[3]=DetectTime*t;
+                    E->D1=1;
+                }else{
+                    E->Action[3]-=t;
                 }
                 //无人整蛊，正常出入
                 if (StackEmpty(E->ElePeople[E->Floor])) {//电梯人出来完了
                     sprintf(logger,"%s电梯:%d内要出来的人已全部出来\n",logger,ele);
                     if (QueueEmpty(W[E->Floor])||((QueueSize(W[E->Floor])==1&&W[E->Floor]->front->next->data->flag[1]==1-ele))&&DoubleEle){//门外人进来完了
                         E->D2=1;
-                        if (E->Action[2] == -1&&E->Action[3]==-1) {//此时无人进出，准备关门 有人进出的40t计时的剩余部分会直接在这部分继续
-                            E->Action[1] = 5;
-                            E->Action[2] = DetectTime * t;
-                            E->Action[2] -= t;
-                            sprintf(logger,"%s电梯:%d准备关门1\n",logger,ele);
+                        E->Action[2]=E->Action[3];
+                        if(E->D1==1){
+                            E->Action[0] = 5;
+                            E->Action[2] = -1;
+                            E->Action[3] = -1;
+                            E->CallCar[E->Floor]=0;
+                            But->CallDown[E->Floor]=0;
+                            But->CallUp[E->Floor]=0;
+                            E->D2==0;
+                            sprintf(logger,"%s电梯:%d准备关门\n",logger,ele);
                             return;
-                        } else {
-                            if(E->Action[3]!=-1&&E->D1==1){
-                                E->Action[2]=E->Action[3];
-                                sprintf(logger,"%spass value\n",logger);
-                                E->D1=0;
-                            }
-                            if (E->Action[2] == t) {//门已关上
-                                E->Action[0] = 5;
-                                E->Action[2] = -1;
-                                E->Action[3] = -1;
-                                E->CallCar[E->Floor]=0;
-                                But->CallDown[E->Floor]=0;
-                                But->CallUp[E->Floor]=0;
-                                E->D2==0;
-                                sprintf(logger,"%s电梯:%d准备关门2\n",logger,ele);
-                                return;
-                            } else {
-                                E->Action[2] -= t;
-                                sprintf(logger,"%s电梯:%d准备关门3\n",logger,ele);
-                                return;
-                            }
+                        }else{
+                            sprintf(logger,"%s电梯:%d准备关门\n",logger,ele);
+                            return;
                         }
                     } else {//门外还有人进
                         if(E->D2==1&&E->Action[2]!=-1){
-                            E->Action[3]=E->Action[2]-t;
                             E->Action[2]=-1;
                             E->D2=0;
                         }
@@ -725,7 +715,7 @@ void Init(Button *But,Queue **W,Elevator **E){
     }
 }
 
-void Simulator(){
+void Simulator(int T){
     int *Time=(int*) malloc(sizeof (int));
     double i=0;
     *Time=0;

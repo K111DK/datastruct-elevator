@@ -9,7 +9,7 @@
 #include "time.h"
 #include "string.h"
 #define t 1//单位时间
-#define T 5000//总模拟时间
+//#define T 5000//总模拟时间
 enum {GoingUp=1,GoingDown=2,Idle=3,GoingBack=4};//电梯的三种状态
 #define Maxsize 500//电梯最大载客量及各层最大排队人数
 #define FloorNum 5//楼层数
@@ -27,9 +27,11 @@ enum {GoingUp=1,GoingDown=2,Idle=3,GoingBack=4};//电梯的三种状态
 #define VisuaLize 1
 #define EXAMPLE 0
 #define DoubleEle 1
-char EleLogger[T][500];
-char PersonLogger[T][1000];
-char VisualLogger[T][1000];
+char EleLogger[10003][500];
+char PersonLogger[10003][1000];
+char VisualLogger[10003][1000];
+
+
 //void LogInfo(Logger*logger,const char *info){
 //
 //}
