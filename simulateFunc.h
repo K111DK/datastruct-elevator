@@ -99,7 +99,6 @@ int Controller(Queue **W,Elevator **Ele,Button *But,int ele,int *Time){
         }
     }
     if(E->State==GoingUp){
-
         if(E->Floor==4){
             E->State=GoingDown;
         }else {
@@ -256,7 +255,6 @@ void ElevatorProcess(Queue **W,Elevator **Ele,Button *But,int *Time,int ele,char
                 }else{
                     E->Action[3]-=t;
                 }
-                //无人整蛊，正常出入
                 if (StackEmpty(E->ElePeople[E->Floor])) {//电梯人出来完了
                     sprintf(logger,"%s电梯:%d内要出来的人已全部出来\n",logger,ele);
                     if (QueueEmpty(W[E->Floor])||((QueueSize(W[E->Floor])==1&&W[E->Floor]->front->next->data->flag[1]==1-ele))&&DoubleEle){//门外人进来完了
@@ -727,9 +725,10 @@ void Simulator(int T){
     Init(But,WaitingQue,E);//初始化系统
     PersonRandGenAdd(WaitingQue,But,E,To,Time,PersonLogger[*Time]);//随机加入第一个人
     while(*Time!=T){
-        printf("Simulate Process:%.1f%c\r",(i/T)*100,37);
+
         (*Time)+=1;
         i=(*Time);
+        printf("Simulate Process:%.1f%c\r",(i/T)*100,37);
         srand((unsigned int)*(Time));//*time(NULL)
         ElevatorProcess(WaitingQue,E,But,Time,0,EleLogger[*Time]);
         ElevatorProcess(WaitingQue,E,But,Time,1,EleLogger[*Time]);

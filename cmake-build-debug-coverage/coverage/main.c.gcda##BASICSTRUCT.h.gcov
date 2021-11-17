@@ -1,0 +1,481 @@
+        -:    0:Source:C:/Users/35802/Desktop/elevator/BASICSTRUCT.h
+        -:    0:Graph:C:\Users\35802\Desktop\elevator\cmake-build-debug-coverage\CMakeFiles\elevator.dir\main.c.gcno
+        -:    0:Data:C:\Users\35802\Desktop\elevator\cmake-build-debug-coverage\CMakeFiles\elevator.dir\main.c.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://
+        -:    2:// Created by 35802 on 2021/10/31.
+        -:    3://
+        -:    4:#ifndef MAIN_C_BASICSTRUCT_H
+        -:    5:#define MAIN_C_BASICSTRUCT_H
+        -:    6:#include <stdio.h>
+        -:    7:#include <stdlib.h>
+        -:    8:#define t 1//单位时间
+        -:    9:#define T 10000//总模拟时间
+        -:   10:enum {GoingUp=1,GoingDown=2,Idle=3,GoingBack=4};//电梯的三种状态
+        -:   11:#define Maxsize 500//电梯最大载客量及各层最大排队人数
+        -:   12:#define FloorNum 5//楼层数
+        -:   13:#define MaxInterTime 80
+        -:   14:#define DoorOperTime 20
+        -:   15:#define InOutTime 25
+        -:   16:#define AccerlerTime 20
+        -:   17:#define deccerlerTime 20
+        -:   18:#define UpingTime 15
+        -:   19:#define DowningTime 15
+        -:   20:#define IdleTime 300
+        -:   21:#define DetectTime 40
+        -:   22:#define GenDetail 0
+        -:   23:#define EleDetail 1
+        -:   24:#define VisuaLize 1
+        -:   25:#define EXAMPLE 0
+        -:   26:#define DoubleEle 1
+        -:   27:typedef struct Logger{
+        -:   28:    char log[10000][500];
+        -:   29:}Logger;
+        -:   30://void LogInfo(Logger*logger,const char *info){
+        -:   31://
+        -:   32://}
+        -:   33://void save(Logger*logger)//保存学生信息
+        -:   34://{
+        -:   35://    FILE*fp;
+        -:   36://    if((fp=fopen("info.txt","wb"))==NULL)exit(0);
+        -:   37://        fwrite(logger,sizeof(Logger),1,fp);
+        -:   38://    fclose(fp);
+        -:   39://}
+        -:   40://Logger *LoadLog(void)
+        -:   41://{
+        -:   42://    Logger *head,*temp,*temp1;
+        -:   43://    temp=(Logger *)malloc(sizeof(Logger));
+        -:   44://    head=temp;
+        -:   45://    temp1=temp;
+        -:   46://    FILE*fp;
+        -:   47://    if((fp=fopen("info.txt","rb"))==NULL)exit(0);
+        -:   48://    for(;!feof(fp);temp=temp->next)
+        -:   49://    {
+        -:   50://        fread(temp,sizeof(Logger),1,fp);
+        -:   51://        temp->next=(Logger *)malloc(sizeof(Logger));
+        -:   52://        temp1=temp;
+        -:   53://    }
+        -:   54://    temp1->next=NULL;
+        -:   55://    for(temp=head;temp->next!=NULL;temp=temp->next)temp1=temp;
+        -:   56://    temp1->next=NULL;
+        -:   57://    fclose(fp);
+        -:   58://    return head;
+        -:   59://}
+        -:   60:
+        -:   61:typedef struct TimeLine{
+        -:   62:    struct TimeLine *next;
+        -:   63:    int time;
+        -:   64:}TimeLine;
+        -:   65:
+        -:   66:typedef struct Button{
+        -:   67:    int CallUp[FloorNum];
+        -:   68:    int CallDown[FloorNum];
+        -:   69:}Button;//各楼层按钮情况
+        -:   70:
+        -:   71:typedef struct  Person{
+        -:   72:    int InFloor;
+        -:   73:    int OutFloor;
+        -:   74:    int GivenUpTime;
+        -:   75:    int InterTime;
+        -:   76:    int code;
+        -:   77:    int flag[2];
+        -:   78:}Person;
+        -:   79:
+        -:   80:typedef  struct StackNode{
+        -:   81:    Person *data;
+        -:   82:    struct StackNode *next;
+        -:   83:}StackNode;
+        -:   84:
+        -:   85:typedef struct Stack//电梯栈，储存各目标楼层下的人
+        -:   86:{
+        -:   87:    StackNode *top;
+        -:   88:    StackNode *bottom;
+        -:   89:    int Size;
+        -:   90:}Stack;
+        -:   91:
+        -:   92:typedef struct Elevator{//电梯
+        -:   93:    Stack *ElePeople[FloorNum];//电梯前往各目标楼层人
+        -:   94:    int CallCar[FloorNum];
+        -:   95:    int State;//电梯运行状态
+        -:   96:    int Floor;//电梯所在楼层
+        -:   97:    int D1;//有人出入为1
+        -:   98:    int D2;//关门
+        -:   99:    int D3;//无人进出且门开为1
+        -:  100:    int Action[4];//代表电梯各个活动及活动计时器
+        -:  101:}Elevator;
+        -:  102:
+        -:  103:typedef struct QNode{
+        -:  104:    Person *data;
+        -:  105:    struct QNode * next;
+        -:  106:}QNode;
+        -:  107:typedef struct Queue{
+        -:  108:    QNode *rear,*front;
+        -:  109:}Queue;
+        -:  110:
+        -:  111:
+        -:  112:
+function TimeLineInit called 1 returned 100% blocks executed 100%
+        1:  113:TimeLine *TimeLineInit(){
+        1:  114:    TimeLine *time=(TimeLine*)malloc(sizeof (TimeLine));
+        1:  115:    time->time=-1;
+        1:  116:    time->next=NULL;
+        1:  117:    return time;
+        1:  117-block  0
+        -:  118:}
+        -:  119:
+function InsertTime called 62 returned 100% blocks executed 50%
+       62:  120:void InsertTime(TimeLine *time,int tic){
+      62*:  121:    if(!time)return;
+       62:  121-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 62
+    %%%%%:  121-block  1
+       62:  122:    if(time->next==NULL&&time->time==-1){
+       62:  122-block  0
+branch  0 taken 62 (fallthrough)
+branch  1 taken 0
+       62:  122-block  1
+branch  2 taken 62 (fallthrough)
+branch  3 taken 0
+       62:  123:        time->time=tic*t;
+       62:  123-block  0
+        -:  124:    } else{
+    #####:  125:        TimeLine *s= (TimeLine*)malloc(sizeof (TimeLine));
+    #####:  126:        s->time=tic*t;
+    #####:  127:        while (time->next){
+    %%%%%:  127-block  0
+    %%%%%:  127-block  1
+branch  0 never executed
+branch  1 never executed
+    #####:  128:            time=time->next;
+    %%%%%:  128-block  0
+        -:  129:        }
+    #####:  130:        time->next=s;
+    #####:  131:        s->next=NULL;
+    %%%%%:  131-block  0
+        -:  132:    }
+        -:  133:}
+        -:  134:
+function TimeLinePrint called 2394 returned 100% blocks executed 89%
+     2394:  135:void TimeLinePrint(TimeLine* To){
+     2394:  136:    if(To->next==NULL&&To->time==-1){
+     2394:  136-block  0
+branch  0 taken 2394 (fallthrough)
+branch  1 taken 0
+     2394:  136-block  1
+branch  2 taken 0 (fallthrough)
+branch  3 taken 2394
+    #####:  137:        return;
+    %%%%%:  137-block  0
+        -:  138:    }else{
+     2394:  139:        TimeLine * Node=To;
+     4788:  140:        while(Node){
+     2394:  140-block  0
+     4788:  140-block  1
+branch  0 taken 2394
+branch  1 taken 2394 (fallthrough)
+     2394:  141:            printf("下一个人将在:%d个单位时间后加入排队队列\n",Node->time);
+     2394:  141-block  0
+call    0 returned 2394
+     2394:  142:            Node=Node->next;
+        -:  143:        }
+     2394:  144:        return;
+     2394:  144-block  0
+        -:  145:    }
+        -:  146:}
+function DeletTime called 2394 returned 100% blocks executed 44%
+     2394:  147:int DeletTime(TimeLine *time){//对要加入的人进行计时，并得到当前时刻的加入人数
+        -:  148:    TimeLine *pre,*front;
+     2394:  149:    int num=0;
+     2394:  150:    if(!time){
+     2394:  150-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 2394
+    #####:  151:        return 0;
+    %%%%%:  151-block  0
+        -:  152:    }
+     2394:  153:    if((time->next==NULL&&time->time==-1)){
+     2394:  153-block  0
+branch  0 taken 2394 (fallthrough)
+branch  1 taken 0
+     2394:  153-block  1
+branch  2 taken 0 (fallthrough)
+branch  3 taken 2394
+    #####:  154:        return 0;
+    %%%%%:  154-block  0
+        -:  155:    }
+     2394:  156:    pre=time;
+     2394:  157:    pre->time-=t;
+     2394:  158:    front=pre->next;
+     2394:  159:    if(front==NULL){
+     2394:  159-block  0
+branch  0 taken 2394 (fallthrough)
+branch  1 taken 0
+     2394:  160:        num = pre->time==0?1:0;
+     2394:  161:        if(num==1){
+     2394:  161-block  0
+branch  0 taken 61 (fallthrough)
+branch  1 taken 2333
+       61:  162:            pre->time=-1;
+       61:  162-block  0
+        -:  163:        }
+     2394:  164:        return num;
+     2394:  164-block  0
+        -:  165:    }
+    #####:  166:    while(front->next!=NULL){
+    %%%%%:  166-block  0
+    %%%%%:  166-block  1
+branch  0 never executed
+branch  1 never executed
+        -:  167:        {
+    #####:  168:            front->time-=t;
+    #####:  169:            if(front->time==0){
+    %%%%%:  169-block  0
+branch  0 never executed
+branch  1 never executed
+    #####:  170:                num++;
+    #####:  171:                pre->next=front->next;
+    #####:  172:                front=front->next;
+    #####:  173:                if(front==NULL){
+    %%%%%:  173-block  0
+branch  0 never executed
+branch  1 never executed
+    #####:  174:                    break;
+    %%%%%:  174-block  0
+        -:  175:                }
+    #####:  176:                continue;
+    %%%%%:  176-block  0
+        -:  177:            }
+    #####:  178:            front=front->next;
+    #####:  179:            pre=pre->next;
+    %%%%%:  179-block  0
+        -:  180:        }
+        -:  181:    }
+    #####:  182:    return num;
+    %%%%%:  182-block  0
+        -:  183:}
+        -:  184:
+        -:  185:
+        -:  186:
+function InitStack called 10 returned 100% blocks executed 100%
+       10:  187:Stack * InitStack(){
+       10:  188:    Stack *p=(Stack*) malloc(sizeof (Stack));
+       10:  189:    p->bottom=p->top=(StackNode*) malloc(sizeof (StackNode));
+       10:  190:    p->bottom->next=NULL;
+       10:  191:    p->bottom->data=NULL;
+       10:  192:    p->Size = Maxsize;
+       10:  193:    return p;
+       10:  193-block  0
+        -:  194:}
+function StackEmpty called 31186 returned 100% blocks executed 83%
+    31186:  195:int StackEmpty(Stack *p)
+        -:  196:{
+   31186*:  197:    if(!p)return 0;
+    31186:  197-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 31186
+    %%%%%:  197-block  1
+    31186:  198:    if (p->top == p->bottom){
+    31186:  198-block  0
+branch  0 taken 21520 (fallthrough)
+branch  1 taken 9666
+    21520:  199:        return 1;
+    21520:  199-block  0
+        -:  200:    }
+        -:  201:    else{
+     9666:  202:        return 0;
+     9666:  202-block  0
+        -:  203:    }
+        -:  204:}
+function StackSize called 0 returned 0% blocks executed 0%
+    #####:  205:int StackSize(Stack *p)
+        -:  206:{
+    #####:  207:    if(p->top==p->bottom)return 0;
+    %%%%%:  207-block  0
+branch  0 never executed
+branch  1 never executed
+    %%%%%:  207-block  1
+    #####:  208:    int num=0;
+    #####:  209:    StackNode *node= (StackNode*) malloc(sizeof (StackNode));
+    #####:  210:    node=p->top;
+    #####:  211:    while(node!=p->bottom){
+    %%%%%:  211-block  0
+    %%%%%:  211-block  1
+branch  0 never executed
+branch  1 never executed
+    #####:  212:        num++;
+    #####:  213:        node=node->next;
+    %%%%%:  213-block  0
+        -:  214:    }
+    #####:  215:    return num;
+    %%%%%:  215-block  0
+        -:  216:}
+function Push called 27 returned 100% blocks executed 75%
+       27:  217:int Push(Stack *p,Person *a) {
+       27:  218:    if(p==NULL){
+       27:  218-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 27
+    #####:  219:        return 0;
+    %%%%%:  219-block  0
+        -:  220:    }
+       27:  221:    StackNode * newNode=(StackNode*) malloc(sizeof (StackNode));
+       27:  222:        newNode->data=a;
+       27:  223:        newNode->next=p->top;
+       27:  224:        p->top=newNode;
+       27:  225:        return 1;
+       27:  225-block  0
+        -:  226:}
+        -:  227:
+function Pop called 20 returned 100% blocks executed 83%
+       20:  228:Person *Pop(Stack *p)
+        -:  229:{
+       20:  230:    if (StackEmpty(p) == 1||p==NULL){
+       20:  230-block  0
+call    0 returned 20
+branch  1 taken 20 (fallthrough)
+branch  2 taken 0
+       20:  230-block  1
+branch  3 taken 0 (fallthrough)
+branch  4 taken 20
+    #####:  231:        return 0;
+    %%%%%:  231-block  0
+        -:  232:    }
+        -:  233:    StackNode *node;
+       20:  234:    node=p->top;
+       20:  235:    p->top=p->top->next;
+       20:  236:    return node->data;
+       20:  236-block  0
+        -:  237:}
+        -:  238:
+        -:  239:
+        -:  240:
+        -:  241:
+        -:  242:
+        -:  243:
+function initQueue called 5 returned 100% blocks executed 100%
+        5:  244:Queue * initQueue(){
+        5:  245:    Queue * queue=(Queue*) malloc(sizeof (Queue));
+        5:  246:    queue->front=queue->rear=(QNode*)malloc(sizeof(QNode));
+        5:  247:    queue->rear->next=NULL;
+        5:  248:    return queue;
+        5:  248-block  0
+        -:  249:}
+function enQueue called 62 returned 100% blocks executed 100%
+       62:  250:void enQueue(Queue*queue,Person *data){
+        -:  251:    QNode * enElem;
+       62:  252:    enElem=(QNode*)malloc(sizeof(QNode));
+       62:  253:    enElem->data=data;
+       62:  254:    enElem->next=NULL;
+       62:  255:    queue->rear->next=enElem;
+       62:  256:    queue->rear=enElem;
+       62:  257:}
+function DeQueue called 27 returned 100% blocks executed 83%
+       27:  258:QNode *DeQueue(Queue*queue){
+       27:  259:    if (queue->front->next==NULL) {
+       27:  259-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 27
+    #####:  260:        return NULL;
+    %%%%%:  260-block  0
+        -:  261:    }
+       27:  262:    QNode * p=queue->front->next;
+       27:  263:    queue->front->next=p->next;
+       27:  264:    if (queue->rear==p) {
+       27:  264-block  0
+branch  0 taken 17 (fallthrough)
+branch  1 taken 10
+       17:  265:        queue->rear=queue->front;
+       17:  265-block  0
+        -:  266:    }
+       27:  267:    return p;
+       27:  267-block  0
+        -:  268:}
+function DeletQueNode called 33 returned 100% blocks executed 82%
+       33:  269:void DeletQueNode(Queue*queue,QNode*node){
+       33:  270:    if(queue->rear==queue->front||node==NULL){//队列为空
+       33:  270-block  0
+branch  0 taken 33 (fallthrough)
+branch  1 taken 0
+       33:  270-block  1
+branch  2 taken 0 (fallthrough)
+branch  3 taken 33
+    #####:  271:        exit(0);
+    %%%%%:  271-block  0
+call    0 never executed
+        -:  272:    }
+        -:  273:    QNode *temp;
+       33:  274:    temp=queue->front->next;
+       33:  275:    while((temp->next!=node)&&!temp){
+       33:  275-block  0
+       33:  275-block  1
+branch  0 taken 33 (fallthrough)
+branch  1 taken 0
+       33:  275-block  2
+branch  2 taken 0
+branch  3 taken 33 (fallthrough)
+    #####:  276:        temp=temp->next;
+    %%%%%:  276-block  0
+        -:  277:    }
+       33:  278:    if(node->next==NULL){//只有1个结点
+       33:  278-block  0
+branch  0 taken 22 (fallthrough)
+branch  1 taken 11
+       22:  279:        queue->rear=queue->front;
+       22:  280:        queue->rear->next=NULL;
+       22:  281:        return;
+       22:  281-block  0
+        -:  282:    }
+       11:  283:    temp->next=temp->next->next;
+       11:  283-block  0
+        -:  284:}
+function QueueEmpty called 5769 returned 100% blocks executed 100%
+     5769:  285:int QueueEmpty(Queue*queue){
+     5769:  286:    if(queue->rear==queue->front||queue->front->next==NULL){
+     5769:  286-block  0
+branch  0 taken 2370 (fallthrough)
+branch  1 taken 3399
+     2370:  286-block  1
+branch  2 taken 0 (fallthrough)
+branch  3 taken 2370
+     3399:  287:        return 1;
+     3399:  287-block  0
+        -:  288:    }else{
+     2370:  289:        return 0;
+     2370:  289-block  0
+        -:  290:    }
+        -:  291:}
+function QueueSize called 12744 returned 100% blocks executed 89%
+    12744:  292:int QueueSize(Queue*queue){
+    12744:  293:    int i=0;
+    12744:  294:    if(queue==NULL){
+    12744:  294-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 12744
+    #####:  295:        return -1;
+    %%%%%:  295-block  0
+        -:  296:    }
+    12744:  297:    if(queue->rear==queue->front){
+    12744:  297-block  0
+branch  0 taken 8269 (fallthrough)
+branch  1 taken 4475
+     8269:  298:        return 0;
+     8269:  298-block  0
+        -:  299:    }else{
+        -:  300:        QNode *p;
+     4475:  301:        p=queue->front->next;
+    10434:  302:        while(p){
+     4475:  302-block  0
+    10434:  302-block  1
+branch  0 taken 5959
+branch  1 taken 4475 (fallthrough)
+     5959:  303:            p=p->next;
+     5959:  304:            i++;
+     5959:  304-block  0
+        -:  305:        }
+     4475:  306:        return i;
+     4475:  306-block  0
+        -:  307:    }
+        -:  308:}
+        -:  309:#endif //MAIN_C_BASICSTRUCT_H

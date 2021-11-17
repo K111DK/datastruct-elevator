@@ -1,0 +1,97 @@
+        -:    0:Source:C:/Users/35802/Desktop/elevator/main.c
+        -:    0:Graph:C:\Users\35802\Desktop\elevator\cmake-build-debug-coverage\CMakeFiles\elevator.dir\main.c.gcno
+        -:    0:Data:C:\Users\35802\Desktop\elevator\cmake-build-debug-coverage\CMakeFiles\elevator.dir\main.c.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include "utils.h"
+        -:    2:#include "BASICSTRUCT.h"
+        -:    3:#include "simulateFunc.h"
+        -:    4:#include "time.h"
+        -:    5:
+        -:    6:
+function Init called 1 returned 100% blocks executed 100%
+        1:    7:void Init(Button *But,Queue **W,Elevator **E){
+        1:    8:    int i=0;
+        1:    9:    int j=0;
+        6:   10:    for(i=0;i<FloorNum;i++){
+        1:   10-block  0
+        6:   10-block  1
+branch  0 taken 5
+branch  1 taken 1 (fallthrough)
+        5:   11:        But->CallDown[i]=0;
+        5:   12:        But->CallUp[i]=0;
+        5:   13:        W[i]=initQueue();
+        5:   13-block  0
+call    0 returned 5
+        -:   14:    }
+        3:   15:    for(j=0;j<2;j++){
+        1:   15-block  0
+        3:   15-block  1
+branch  0 taken 2
+branch  1 taken 1 (fallthrough)
+        2:   16:        E[j]=(Elevator*) malloc(sizeof (Elevator));
+       12:   17:        for(i=0;i<FloorNum;i++){
+        2:   17-block  0
+       12:   17-block  1
+branch  0 taken 10
+branch  1 taken 2 (fallthrough)
+       10:   18:            E[j]->ElePeople[i]=InitStack();
+       10:   18-block  0
+call    0 returned 10
+       10:   19:            E[j]->CallCar[i]=0;
+        -:   20:        }
+        2:   21:        E[j]->D1=-1;
+        2:   22:        E[j]->D2=E[j]->D3=0;
+        2:   23:        E[j]->Floor=1;
+        2:   24:        E[j]->State=Idle;
+        2:   25:        E[j]->Action[0]=1;
+        2:   26:        E[j]->Action[1]=-1;
+        2:   27:        E[j]->Action[2]=-1;
+        2:   28:        E[j]->Action[3]=-1;
+        2:   28-block  0
+        -:   29:    }
+        1:   30:}
+        -:   31:
+function main called 1 returned 0% blocks executed 94%
+        1:   32:int main(){
+        1:   33:    int *Time=(int*) malloc(sizeof (int));
+        1:   34:    *Time=0;
+        1:   35:    TimeLine *To=(TimeLine*) malloc(sizeof (TimeLine));
+        1:   36:    To=TimeLineInit();
+        1:   36-block  0
+call    0 returned 1
+        1:   37:    Button *But=(Button*) malloc(sizeof (Button));
+        -:   38:    Queue *WaitingQue[FloorNum];
+        -:   39:    Elevator *E[2];
+        1:   40:    Init(But,WaitingQue,E);//初始化系统
+call    0 returned 1
+        1:   41:    PersonRandGenAdd(WaitingQue,But,E,To,Time);//随机加入第一个人
+call    0 returned 1
+     2394:   42:    while(*Time!=T){
+     2394:   42-block  0
+branch  0 taken 2394
+branch  1 taken 0 (fallthrough)
+     2394:   43:        *Time+=1;
+     2394:   44:        printf("\n--------------------------\n时间:%d\n",*Time);
+     2394:   44-block  0
+call    0 returned 2394
+     2394:   45:        srand((unsigned int)*(Time));//*time(NULL)
+call    0 returned 2394
+     2394:   46:        ElevatorProcess(WaitingQue,E,But,Time,0);
+call    0 returned 2394
+     2394:   47:        ElevatorProcess(WaitingQue,E,But,Time,1);
+call    0 returned 2394
+     2394:   48:        PeopleProcess(WaitingQue,E,But,To,Time);
+call    0 returned 2394
+     2394:   49:        QueuePrint(WaitingQue,But,E);
+call    0 returned 2394
+     2394:   50:        TimeLinePrint(To);
+call    0 returned 2394
+     2394:   51:        printf("--------------------------\n");
+call    0 returned 2394
+     2394:   52:        ElePrint(E,WaitingQue,But,Time);
+call    0 returned 2394
+     2394:   53:        system("cls");
+call    0 returned 2393
+        -:   54:    }
+        -:   55:}

@@ -1,0 +1,38 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/35802/Desktop/elevator/BASICSTRUCT.h
+stdio.h
+-
+stdlib.h
+-
+
+C:/Users/35802/Desktop/elevator/main.c
+utils.h
+C:/Users/35802/Desktop/elevator/utils.h
+BASICSTRUCT.h
+C:/Users/35802/Desktop/elevator/BASICSTRUCT.h
+simulateFunc.h
+C:/Users/35802/Desktop/elevator/simulateFunc.h
+windows.h
+C:/Users/35802/Desktop/elevator/windows.h
+time.h
+C:/Users/35802/Desktop/elevator/time.h
+string.h
+C:/Users/35802/Desktop/elevator/string.h
+
+C:/Users/35802/Desktop/elevator/simulateFunc.h
+BASICSTRUCT.h
+C:/Users/35802/Desktop/elevator/BASICSTRUCT.h
+
+C:/Users/35802/Desktop/elevator/utils.h
+stdio.h
+C:/Users/35802/Desktop/elevator/stdio.h
+stdlib.h
+C:/Users/35802/Desktop/elevator/stdlib.h
+

@@ -27,6 +27,9 @@ enum {GoingUp=1,GoingDown=2,Idle=3,GoingBack=4};//电梯的三种状态
 #define VisuaLize 1
 #define EXAMPLE 0
 #define DoubleEle 1
+
+
+
 char EleLogger[10003][500];
 char PersonLogger[10003][1000];
 char VisualLogger[10003][1000];

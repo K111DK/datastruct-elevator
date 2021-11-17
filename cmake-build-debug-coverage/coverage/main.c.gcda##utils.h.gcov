@@ -1,0 +1,22 @@
+        -:    0:Source:C:/Users/35802/Desktop/elevator/utils.h
+        -:    0:Graph:C:\Users\35802\Desktop\elevator\cmake-build-debug-coverage\CMakeFiles\elevator.dir\main.c.gcno
+        -:    0:Data:C:\Users\35802\Desktop\elevator\cmake-build-debug-coverage\CMakeFiles\elevator.dir\main.c.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://
+        -:    2:// Created by 35802 on 2021/10/31.
+        -:    3://
+        -:    4:
+        -:    5:#ifndef MAIN_C_UTILS_H
+        -:    6:#define MAIN_C_UTILS_H
+        -:    7:#include "stdio.h"
+        -:    8:#include "stdlib.h"
+        -:    9:
+function GenRand called 276 returned 100% blocks executed 100%
+      276:   10:int GenRand(int a){//产生范围为0~a的随机整数
+      276:   11:    return rand()%a+1;
+      276:   11-block  0
+call    0 returned 276
+        -:   12:}
+        -:   13:
+        -:   14:#endif //MAIN_C_UTILS_H

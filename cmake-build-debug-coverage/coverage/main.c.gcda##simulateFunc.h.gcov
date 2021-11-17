@@ -1,0 +1,1467 @@
+        -:    0:Source:C:/Users/35802/Desktop/elevator/simulateFunc.h
+        -:    0:Graph:C:\Users\35802\Desktop\elevator\cmake-build-debug-coverage\CMakeFiles\elevator.dir\main.c.gcno
+        -:    0:Data:C:\Users\35802\Desktop\elevator\cmake-build-debug-coverage\CMakeFiles\elevator.dir\main.c.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://
+        -:    2:// Created by 35802 on 2021/10/31.
+        -:    3://
+        -:    4:#ifndef MAIN_C_SIMULATEFUNC_H
+        -:    5:#define MAIN_C_SIMULATEFUNC_H
+        -:    6:#include "BASICSTRUCT.h"
+        -:    7:int IfOverCross(Button *B,Elevator *E);
+function PersonRandGenAdd called 62 returned 100% blocks executed 100%
+       62:    8:Person *PersonRandGenAdd(Queue **W,Button *button,Elevator **E,TimeLine *To,const int * Time){//（伪）随机地生成一个人加入到队列
+       62:    8-block  0
+        -:    9:    Person *a;
+        -:   10:    if(*Time==0&&EXAMPLE){
+        -:   11:        a=(Person*)malloc(sizeof (Person));
+        -:   12:        a->GivenUpTime= GenRand(100)*t+40*t;
+        -:   13:        a->InFloor = 1;
+        -:   14:        a->OutFloor = 4;
+        -:   15:        a->InterTime = 1000*t;
+        -:   16:        a->code=*Time;
+        -:   17:        a->flag[0]=0;
+        -:   18:        a->flag[1]=-1;
+        -:   19:        InsertTime(To,a->InterTime);
+        -:   20:    }else{
+       62:   21:    a=(Person*)malloc(sizeof (Person));
+       62:   22:    a->GivenUpTime= GenRand(100)*t+40*t;
+       62:   22-block  0
+call    0 returned 62
+       62:   23:    a->InFloor = GenRand(FloorNum)-1;
+call    0 returned 62
+       62:   24:    a->OutFloor = GenRand(FloorNum)-1;
+call    0 returned 62
+       62:   25:    a->InterTime = GenRand(MaxInterTime)*t;
+call    0 returned 62
+       62:   26:    a->code=*Time;
+       62:   27:    a->flag[0]=0;
+       62:   28:    a->flag[1]=-1;
+       62:   29:    InsertTime(To,a->InterTime);
+call    0 returned 62
+        -:   30:    }
+       90:   31:    while (a->OutFloor==a->InFloor){
+       90:   31-block  0
+branch  0 taken 28
+branch  1 taken 62 (fallthrough)
+       28:   32:        a->OutFloor = GenRand(FloorNum)-1;
+       28:   32-block  0
+call    0 returned 28
+        -:   33:    }
+        -:   34://    printf("INFO:\nGUtime:%f\nITtime:%f\n",a->GivenUpTime,a->InterTime);
+       62:   35:    enQueue(W[a->InFloor],a);
+       62:   35-block  0
+call    0 returned 62
+        -:   36:    //将随机生成的人加入等待队列
+       62:   37:    printf("新的人No:%d进入第%d层排队队列.\n", a->code, a->InFloor);
+call    0 returned 62
+        -:   38:    if(GenDetail){
+        -:   39:        printf("-----------------\n人物信息:\n最大等待时间:%d\n起始层:%d\n目的层:%d\n下一个人到达时间:%d\n序号:%d\n-----------------\n",
+        -:   40:               a->GivenUpTime, a->InFloor, a->OutFloor, a->InterTime, a->code);
+        -:   41:    }
+       62:   42:    if(a->InFloor==E[0]->Floor&&(E[0]->Action[0]==3||E[0]->Action[0]==4)||a->InFloor==E[1]->Floor&&(E[1]->Action[0]==3||E[1]->Action[0]==4)){
+branch  0 taken 7 (fallthrough)
+branch  1 taken 55
+        7:   42-block  0
+branch  2 taken 5 (fallthrough)
+branch  3 taken 2
+        5:   42-block  1
+branch  4 taken 2 (fallthrough)
+branch  5 taken 3
+       57:   42-block  2
+branch  6 taken 7 (fallthrough)
+branch  7 taken 50
+        7:   42-block  3
+branch  8 taken 6 (fallthrough)
+branch  9 taken 1
+        6:   42-block  4
+branch 10 taken 4 (fallthrough)
+branch 11 taken 2
+       10:   43:        a->GivenUpTime=0;
+       10:   44:        printf("电梯就在本层且未离开,No:%d 准备进入电梯.\n",a->code);
+       10:   44-block  0
+call    0 returned 10
+        -:   45:    }
+       62:   46:        E[0]->CallCar[a->InFloor]=1;
+       62:   47:        E[1]->CallCar[a->InFloor]=1;
+       62:   48:        if(a->InFloor>a->OutFloor){
+       62:   48-block  0
+branch  0 taken 28 (fallthrough)
+branch  1 taken 34
+       28:   49:            button->CallDown[a->InFloor]=1;
+       28:   49-block  0
+        -:   50:        }else{
+       34:   51:            button->CallUp[a->InFloor]=1;
+       34:   51-block  0
+        -:   52:        }
+       62:   53:        printf("No:%d 按下按钮并在队列中等待.\n",a->code);
+       62:   53-block  0
+call    0 returned 62
+       62:   54:    return a;
+        -:   55:}
+        -:   56:
+function Controller called 6637 returned 100% blocks executed 75%
+     6637:   57:int Controller(Queue **W,Elevator **Ele,Button *But,int ele,int *Time){
+        -:   58:    Elevator *E;
+     6637:   59:    E=Ele[ele];
+     6637:   60:    if(E->State==Idle&&E->Action[0]==1){
+     6637:   60-block  0
+branch  0 taken 25 (fallthrough)
+branch  1 taken 6612
+       25:   60-block  1
+branch  2 taken 23 (fallthrough)
+branch  3 taken 2
+       23:   61:        return 1;
+       23:   61-block  0
+        -:   62:    }
+     6614:   63:    int i=0;
+     8926:   64:        for(i=0;i<FloorNum;i++){
+     6614:   64-block  0
+     2312:   64-block  1
+     8926:   64-block  2
+branch  0 taken 8926
+branch  1 taken 0 (fallthrough)
+     8926:   65:            if((But->CallDown[i]||But->CallUp[i]||E->CallCar[i])&&i!=E->Floor){
+     8926:   65-block  0
+branch  0 taken 8659 (fallthrough)
+branch  1 taken 267
+     8659:   65-block  1
+branch  2 taken 3890 (fallthrough)
+branch  3 taken 4769
+     3890:   65-block  2
+branch  4 taken 2054 (fallthrough)
+branch  5 taken 1836
+     7090:   65-block  3
+branch  6 taken 6614 (fallthrough)
+branch  7 taken 476
+     6614:   66:                if(E->State==Idle){
+     6614:   66-block  0
+branch  0 taken 2 (fallthrough)
+branch  1 taken 6612
+        2:   67:                if(i>E->Floor){
+        2:   67-block  0
+branch  0 taken 1 (fallthrough)
+branch  1 taken 1
+        1:   68:                    E->State=GoingUp;
+        1:   68-block  0
+        -:   69:                }else{
+        1:   70:                    E->State=GoingDown;
+        1:   70-block  0
+        -:   71:                }
+        2:   72:                return i;
+        2:   72-block  0
+        -:   73:                }
+        -:   74:                else {
+     6612:   75:                    break;
+     6612:   75-block  0
+        -:   76:                }
+        -:   77:            }
+        -:   78:        }
+     6612:   79:        if(i==FloorNum){
+     6612:   79-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 6612
+    #####:   80:            E->State=Idle;
+    #####:   81:            return 1;
+    %%%%%:   81-block  0
+        -:   82:        }
+     6612:   83:    if(E->State==GoingBack){
+     6612:   83-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 6612
+    #####:   84:        for(i=0;i<FloorNum;i++){
+    %%%%%:   84-block  0
+    %%%%%:   84-block  1
+    %%%%%:   84-block  2
+branch  0 never executed
+branch  1 never executed
+    #####:   85:            if((But->CallDown[i]||But->CallUp[i]||E->CallCar[i])&&i!=E->Floor){
+    %%%%%:   85-block  0
+branch  0 never executed
+branch  1 never executed
+    %%%%%:   85-block  1
+branch  2 never executed
+branch  3 never executed
+    %%%%%:   85-block  2
+branch  4 never executed
+branch  5 never executed
+    %%%%%:   85-block  3
+branch  6 never executed
+branch  7 never executed
+    #####:   86:                break;
+    %%%%%:   86-block  0
+        -:   87:            }
+        -:   88:        }
+    #####:   89:        if(i==FloorNum) {
+    %%%%%:   89-block  0
+branch  0 never executed
+branch  1 never executed
+    #####:   90:            E->CallCar[1] = 1;
+    #####:   91:            return 1;
+    %%%%%:   91-block  0
+        -:   92:        }else{
+    #####:   93:            if(i>E->Floor){
+    %%%%%:   93-block  0
+branch  0 never executed
+branch  1 never executed
+    #####:   94:                E->State=GoingUp;
+    #####:   95:                return i;
+    %%%%%:   95-block  0
+        -:   96:            }else{
+    #####:   97:                E->State=GoingDown;
+    %%%%%:   97-block  0
+        -:   98:            }
+        -:   99:        }
+        -:  100:    }
+     6612:  101:    if(E->State==GoingUp){
+     6612:  101-block  0
+branch  0 taken 3425 (fallthrough)
+branch  1 taken 3187
+        -:  102:
+     3425:  103:        if(E->Floor==4){
+     3425:  103-block  0
+branch  0 taken 4 (fallthrough)
+branch  1 taken 3421
+        4:  104:            E->State=GoingDown;
+        4:  104-block  0
+        -:  105:        }else {
+     3848:  106:            for (i = E->Floor + 1; i < FloorNum; i++) {
+     3421:  106-block  0
+      427:  106-block  1
+     3848:  106-block  2
+branch  0 taken 3847
+branch  1 taken 1 (fallthrough)
+     3847:  107:                if ((But->CallDown[i] || But->CallUp[i] || E->CallCar[i]) && i != E->Floor) {
+     3847:  107-block  0
+branch  0 taken 1785 (fallthrough)
+branch  1 taken 2062
+     1785:  107-block  1
+branch  2 taken 1033 (fallthrough)
+branch  3 taken 752
+     1033:  107-block  2
+branch  4 taken 606 (fallthrough)
+branch  5 taken 427
+     3420:  107-block  3
+branch  6 taken 3420 (fallthrough)
+branch  7 taken 0
+     3420:  108:                    return i;
+     3420:  108-block  0
+        -:  109:                }
+        -:  110:            }
+        1:  111:            E->State = GoingDown;
+        1:  111-block  0
+        -:  112:        }
+        -:  113:    }
+     3192:  114:    if(E->State==GoingDown){
+     3192:  114-block  0
+branch  0 taken 3192 (fallthrough)
+branch  1 taken 0
+     3192:  115:        if(E->Floor==0){
+     3192:  115-block  0
+branch  0 taken 4 (fallthrough)
+branch  1 taken 3188
+        4:  116:            E->State=GoingUp;
+        4:  116-block  0
+        -:  117:        }
+        -:  118:        else{
+     3540:  119:        for(i=E->Floor-1;i>=0;i--){
+     3188:  119-block  0
+      352:  119-block  1
+     3540:  119-block  2
+branch  0 taken 3540
+branch  1 taken 0 (fallthrough)
+     3540:  120:            if((But->CallDown[i]||But->CallUp[i]||E->CallCar[i])&&i!=E->Floor){
+     3540:  120-block  0
+branch  0 taken 1999 (fallthrough)
+branch  1 taken 1541
+     1999:  120-block  1
+branch  2 taken 1349 (fallthrough)
+branch  3 taken 650
+     1349:  120-block  2
+branch  4 taken 997 (fallthrough)
+branch  5 taken 352
+     3188:  120-block  3
+branch  6 taken 3188 (fallthrough)
+branch  7 taken 0
+     3188:  121:                return i;
+     3188:  121-block  0
+        -:  122:            }
+        -:  123:        }
+        -:  124:        }
+        4:  125:        E->State=GoingUp;
+        4:  126:        return Controller(W,Ele,But,ele,Time);
+        4:  126-block  0
+call    0 returned 4
+        -:  127:    }
+    #####:  128:    return 1;
+    %%%%%:  128-block  0
+        -:  129:}
+        -:  130:
+function TotalCall called 22 returned 100% blocks executed 100%
+       22:  131:int TotalCall(Button*But){
+       22:  132:    int num=0;
+       22:  133:    int i=0;
+      132:  134:    for(i=0;i<FloorNum;i++){
+       22:  134-block  0
+      110:  134-block  1
+      132:  134-block  2
+branch  0 taken 110
+branch  1 taken 22 (fallthrough)
+      110:  135:        if(But->CallUp[i]||But->CallDown[i]){
+      110:  135-block  0
+branch  0 taken 87 (fallthrough)
+branch  1 taken 23
+       87:  135-block  1
+branch  2 taken 0 (fallthrough)
+branch  3 taken 87
+       23:  136:            num++;
+       23:  136-block  0
+        -:  137:        }
+        -:  138:    }
+       22:  139:    return num;
+       22:  139-block  0
+        -:  140:}
+        -:  141:
+function IfOverCross called 1 returned 100% blocks executed 45%
+        1:  142:int IfOverCross(Button*But,Elevator*E){
+        1:  143:    int i=0;
+        1:  144:    if(E->State==GoingUp){
+        1:  144-block  0
+branch  0 taken 1 (fallthrough)
+branch  1 taken 0
+        2:  145:        for(i=E->Floor;i>=0;i--){
+        1:  145-block  0
+        1:  145-block  1
+        2:  145-block  2
+branch  0 taken 2
+branch  1 taken 0
+        2:  146:            if((But->CallDown[i]||But->CallUp[i])){
+        2:  146-block  0
+branch  0 taken 2 (fallthrough)
+branch  1 taken 0
+        2:  146-block  1
+branch  2 taken 1 (fallthrough)
+branch  3 taken 1
+       1*:  147:                if(i==E->Floor&&(E->Action[0]<=5)){
+        1:  147-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 1
+    %%%%%:  147-block  1
+branch  2 never executed
+branch  3 never executed
+        -:  148:                    break;
+        -:  149:                }else{
+        1:  150:                    return 1;
+        1:  150-block  0
+        -:  151:                }
+        -:  152:            }
+        -:  153:        }
+    #####:  154:    }else if(E->State==GoingDown){
+    %%%%%:  154-block  0
+branch  0 never executed
+branch  1 never executed
+    #####:  155:        for(i=E->Floor;i<FloorNum;i++){
+    %%%%%:  155-block  0
+    %%%%%:  155-block  1
+    %%%%%:  155-block  2
+branch  0 never executed
+branch  1 never executed
+    #####:  156:            if((But->CallDown[i]||But->CallUp[i])){
+    %%%%%:  156-block  0
+branch  0 never executed
+branch  1 never executed
+    %%%%%:  156-block  1
+branch  2 never executed
+branch  3 never executed
+    #####:  157:                if(i==E->Floor&&(E->Action[0]<=5)){
+    %%%%%:  157-block  0
+branch  0 never executed
+branch  1 never executed
+    %%%%%:  157-block  1
+branch  2 never executed
+branch  3 never executed
+        -:  158:                    break;
+        -:  159:                }else{
+    #####:  160:                    return 1;
+    %%%%%:  160-block  0
+        -:  161:                }
+        -:  162:            }
+        -:  163:        }
+        -:  164:    }else{
+        -:  165:
+        -:  166:    }
+    #####:  167:    return 0;
+    %%%%%:  167-block  0
+        -:  168:}
+        -:  169:
+        -:  170:
+function ElevatorProcess called 4788 returned 100% blocks executed 85%
+     4788:  171:void ElevatorProcess(Queue **W,Elevator **Ele,Button *But,int *Time,int ele){
+     4788:  172:    int f=0;
+     4788:  173:    int i=0;
+        -:  174:    Elevator *E;
+     4788:  175:    E=Ele[ele];
+     4788:  175-block  0
+        -:  176://    printf("ele:%d   totalcall:%d   ifovercross:%d\n",ele,TotalCall(But),IfOverCross(But,Ele[1-ele]));
+        -:  177:    while(1) {
+     4824:  178:        switch (E->Action[0]) {
+     4824:  178-block  0
+branch  0 taken 23
+branch  1 taken 29
+branch  2 taken 685
+branch  3 taken 2243
+branch  4 taken 648
+branch  5 taken 600
+branch  6 taken 335
+branch  7 taken 261
+branch  8 taken 0
+       36:  178-block  1
+       23:  179:            case 1://一楼等待
+       23:  180:            if(ele==1){
+       23:  180-block  0
+branch  0 taken 22 (fallthrough)
+branch  1 taken 1
+       22:  181:                if((TotalCall(But)<=1||!IfOverCross(But,Ele[1-ele]))||!DoubleEle){
+       22:  181-block  0
+call    0 returned 22
+branch  1 taken 1 (fallthrough)
+branch  2 taken 21
+        1:  181-block  1
+call    3 returned 1
+branch  4 taken 0 (fallthrough)
+branch  5 taken 1
+        -:  182://                    printf("%d",TotalCall(But)<=1||!IfOverCross(But,Ele[1-ele]));
+       21:  183:                    return;
+       21:  183-block  0
+        -:  184:                }
+        -:  185:                }
+        2:  186:                printf("电梯%d在1楼等待.Time:%d\n",ele, *Time);
+        2:  186-block  0
+call    0 returned 2
+        2:  187:                f= Controller(W,Ele,But,ele,Time);
+call    0 returned 2
+        2:  188:                if(f!=-1) {
+branch  0 taken 2 (fallthrough)
+branch  1 taken 0
+        2:  189:                    if (E->Floor == f) {//若在第一层则直接开门
+        2:  189-block  0
+branch  0 taken 2 (fallthrough)
+branch  1 taken 0
+        2:  190:                        E->Action[0] = 3;
+        2:  191:                        printf("电梯:%d准备开门.Time:%d\n",ele,*Time);
+        2:  191-block  0
+call    0 returned 2
+        2:  192:                        break;
+        -:  193:                    } else {//否则开始判断目标层
+    #####:  194:                        E->Action[0] = 6;
+    #####:  195:                        printf("电梯:%d准备移动.Time:%d\n",ele, *Time);
+    %%%%%:  195-block  0
+call    0 never executed
+    #####:  196:                        break;
+        -:  197:                    }
+        -:  198:                }
+    #####:  199:                return;
+    %%%%%:  199-block  0
+       29:  200:            case 2:
+       29:  201:                if(E->State==GoingUp){//到达最高层换方向
+       29:  201-block  0
+branch  0 taken 15 (fallthrough)
+branch  1 taken 14
+       15:  202:                    if(E->Floor==FloorNum-1){
+       15:  202-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 15
+    #####:  203:                        E->State==GoingDown;
+    %%%%%:  203-block  0
+        -:  204:                    }
+        -:  205:                }
+       29:  206:                if(E->State==GoingDown){//换方向
+       29:  206-block  0
+branch  0 taken 14 (fallthrough)
+branch  1 taken 15
+       14:  207:                    if(E->Floor==0){
+       14:  207-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 14
+    #####:  208:                        E->State==GoingUp;
+    %%%%%:  208-block  0
+        -:  209:                    }
+        -:  210:                }
+       29:  211:                if(E->Floor==1&&E->State==GoingBack){
+       29:  211-block  0
+branch  0 taken 6 (fallthrough)
+branch  1 taken 23
+        6:  211-block  1
+branch  2 taken 0 (fallthrough)
+branch  3 taken 6
+    #####:  212:                    E->Action[0]=1;
+    #####:  213:                    E->Action[1]=-1;
+    #####:  214:                    E->Action[2]=-1;
+    #####:  215:                    E->State=Idle;
+    %%%%%:  215-block  0
+        -:  216:                }else{
+       29:  217:                    E->Action[0]=3;
+       29:  217-block  0
+        -:  218:                }
+       29:  219:                break;
+       29:  219-block  0
+      685:  220:            case 3://开门
+      685:  221:            E->D3=0;
+      685:  222:                if (E->Action[2] == -1) {//第一次进入开门状态
+      685:  222-block  0
+branch  0 taken 32 (fallthrough)
+branch  1 taken 653
+       32:  223:                    E->Action[2] = DoorOperTime * t;
+       32:  224:                    E->Action[2] -= t;
+       32:  225:                    E->Action[1] = 4;//次态为4
+       32:  226:                    printf("电梯:%d开始开门.Time:%d\n",ele, *Time);
+       32:  226-block  0
+call    0 returned 32
+       32:  227:                    return;
+        -:  228:                }
+        -:  229:                else{//开门中间态
+      653:  230:                    if (E->Action[2] == t) {//门完全打开
+      653:  230-block  0
+branch  0 taken 36 (fallthrough)
+branch  1 taken 617
+       36:  231:                    printf("电梯:%d门已打开.Time:%d\n",ele, *Time);
+       36:  231-block  0
+call    0 returned 36
+       36:  232:                    E->Action[0] = 4;//让人进出
+       36:  233:                    E->Action[1] = -1;
+       36:  234:                    E->Action[2] = -1;
+       36:  235:                        return;
+        -:  236:                    } else {//门正在打开
+      617:  237:                    printf("电梯:%d正在开门.Time:%d\n",ele, *Time);
+      617:  237-block  0
+call    0 returned 617
+      617:  238:                    E->Action[2] -= t;
+      617:  239:                        return;
+        -:  240:                    }
+        -:  241:                }
+        -:  242:                break;
+     2243:  243:            case 4://让人进出
+     2243:  244:                if (!StackEmpty(E->ElePeople[E->Floor])||!QueueEmpty(W[E->Floor])||(E->Action[2]!=-1&&E->D1==0)) {
+     2243:  244-block  0
+call    0 returned 2243
+branch  1 taken 1743 (fallthrough)
+branch  2 taken 500
+     1743:  244-block  1
+call    3 returned 1743
+branch  4 taken 969 (fallthrough)
+branch  5 taken 774
+      969:  244-block  2
+branch  6 taken 935 (fallthrough)
+branch  7 taken 34
+      935:  244-block  3
+branch  8 taken 818 (fallthrough)
+branch  9 taken 117
+     2092:  245:                    if((E->Action[2]!=-1&&E->D1==0)){
+     2092:  245-block  0
+branch  0 taken 2043 (fallthrough)
+branch  1 taken 49
+     2043:  245-block  1
+branch  2 taken 899 (fallthrough)
+branch  3 taken 1144
+      899:  246:                        E->Action[3]=E->Action[2];
+      899:  246-block  0
+        -:  247:                    }
+     2092:  248:                    if(!StackEmpty(E->ElePeople[E->Floor])||!QueueEmpty(W[E->Floor]))E->D1=1;//有人进出时,进行40t计时,当进出状态保持，40t会不断刷新，进出完毕时，40t会直接进入以下倒数状态
+     2092:  248-block  0
+call    0 returned 2092
+branch  1 taken 1592 (fallthrough)
+branch  2 taken 500
+     1592:  248-block  1
+call    3 returned 1592
+branch  4 taken 774 (fallthrough)
+branch  5 taken 818
+     1274:  248-block  2
+     2092:  249:                    if(E->Action[3]==-1||E->Action[3]==t){
+     2092:  249-block  0
+branch  0 taken 2065 (fallthrough)
+branch  1 taken 27
+     2065:  249-block  1
+branch  2 taken 56 (fallthrough)
+branch  3 taken 2009
+       83:  250:                        E->Action[3]=DetectTime*t;
+       83:  250-block  0
+        -:  251:                    }else{
+     2009:  252:                        E->Action[3]-=t;
+     2009:  252-block  0
+        -:  253:                    }
+        -:  254:                }
+        -:  255:                //无人整蛊，正常出入
+     2243:  256:                    if (StackEmpty(E->ElePeople[E->Floor])) {//电梯人出来完了
+     2243:  256-block  0
+call    0 returned 2243
+branch  1 taken 1743 (fallthrough)
+branch  2 taken 500
+     1743:  257:                        printf("电梯:%d内要出来的人已全部出来\n",ele);
+     1743:  257-block  0
+call    0 returned 1743
+     1743:  258:                        if (QueueEmpty(W[E->Floor])||((QueueSize(W[E->Floor])==1&&W[E->Floor]->front->next->data->flag[1]==1-ele))&&DoubleEle){//门外人进来完了
+call    0 returned 1743
+branch  1 taken 774 (fallthrough)
+branch  2 taken 969
+      774:  258-block  0
+call    3 returned 774
+branch  4 taken 509 (fallthrough)
+branch  5 taken 265
+      509:  258-block  1
+branch  6 taken 83 (fallthrough)
+branch  7 taken 426
+     1052:  259:                            E->D2=1;
+     1052:  260:                            if (E->Action[2] == -1&&E->Action[3]==-1) {//此时无人进出，准备关门 有人进出的40t计时的剩余部分会直接在这部分继续
+     1052:  260-block  0
+branch  0 taken 40 (fallthrough)
+branch  1 taken 1012
+       40:  260-block  1
+branch  2 taken 9 (fallthrough)
+branch  3 taken 31
+        9:  261:                                E->Action[1] = 5;
+        9:  262:                                E->Action[2] = DetectTime * t;
+        9:  263:                                E->Action[2] -= t;
+        9:  264:                                printf("电梯:%d准备关门1\n",ele);
+        9:  264-block  0
+call    0 returned 9
+        9:  265:                                return;
+        -:  266:                            } else {
+     1043:  267:                                if(E->Action[3]!=-1&&E->D1==1){
+     1043:  267-block  0
+branch  0 taken 926 (fallthrough)
+branch  1 taken 117
+      926:  267-block  1
+branch  2 taken 108 (fallthrough)
+branch  3 taken 818
+      108:  268:                                    E->Action[2]=E->Action[3];
+      108:  269:                                    printf("pass value\n");
+      108:  269-block  0
+call    0 returned 108
+      108:  270:                                    E->D1=0;
+        -:  271:                                }
+     1043:  272:                                if (E->Action[2] == t) {//门已关上
+     1043:  272-block  0
+branch  0 taken 36 (fallthrough)
+branch  1 taken 1007
+       36:  273:                                    E->Action[0] = 5;
+       36:  274:                                    E->Action[2] = -1;
+       36:  275:                                    E->Action[3] = -1;
+       36:  276:                                    E->CallCar[E->Floor]=0;
+       36:  277:                                    But->CallDown[E->Floor]=0;
+       36:  278:                                    But->CallUp[E->Floor]=0;
+       36:  279:                                    E->D2==0;
+       36:  280:                                    printf("电梯:%d准备关门2\n",ele);
+       36:  280-block  0
+call    0 returned 36
+       36:  281:                                    return;
+        -:  282:                                } else {
+     1007:  283:                                    E->Action[2] -= t;
+     1007:  284:                                    printf("电梯:%d准备关门3\n",ele);
+     1007:  284-block  0
+call    0 returned 1007
+     1007:  285:                                    return;
+        -:  286:                                }
+        -:  287:                            }
+        -:  288:                        } else {//门外还有人进
+      691:  289:                            if(E->D2==1&&E->Action[2]!=-1){
+      691:  289-block  0
+branch  0 taken 36 (fallthrough)
+branch  1 taken 655
+       36:  289-block  1
+branch  2 taken 20 (fallthrough)
+branch  3 taken 16
+       20:  290:                                E->Action[3]=E->Action[2]-t;
+       20:  291:                                E->Action[2]=-1;
+       20:  292:                                E->D2=0;
+       20:  292-block  0
+        -:  293:                            }
+      691:  294:                            if (E->Action[2] != -1) {
+      691:  294-block  0
+branch  0 taken 648 (fallthrough)
+branch  1 taken 43
+      648:  295:                                if (E->Action[2] == t) {//计时完毕
+      648:  295-block  0
+branch  0 taken 27 (fallthrough)
+branch  1 taken 621
+        -:  296:                                    QNode *p;
+        -:  297:                                    //当层人出队
+       27:  298:                                    printf("队头:No:%d",W[E->Floor]->front->next->data->code);
+       27:  298-block  0
+call    0 returned 27
+       27:  299:                                    p = DeQueue(W[E->Floor]);
+call    0 returned 27
+       27:  300:                                    E->CallCar[p->data->OutFloor]=1;//电梯内目标楼层按钮按下
+       27:  301:                                    Push(E->ElePeople[p->data->OutFloor], p->data);//把人压入电梯中
+call    0 returned 27
+       27:  302:                                    printf("No:%d已进入电梯%d.Time:%d\n",p->data->code,ele,*Time);
+call    0 returned 27
+       27:  303:                                    p->data->flag[0]=-1;
+       27:  304:                                    E->Action[2] = -1;
+       27:  305:                                    return;
+        -:  306:                                } else {
+      621:  307:                                    QNode *q=W[E->Floor]->front->next->data->flag[1]==ele?W[E->Floor]->front->next:W[E->Floor]->front->next->next;
+      621:  307-block  0
+branch  0 taken 604 (fallthrough)
+branch  1 taken 17
+      604:  307-block  1
+       17:  307-block  2
+      621:  308:                                    E->Action[2] -= t;//继续计时
+      621:  309:                                    printf("No:%d正在进入电梯%d.Time:%d\n",q->data->code,ele,*Time);
+      621:  309-block  0
+call    0 returned 621
+      621:  310:                                    return;
+        -:  311:                                }
+        -:  312:                            } else {//进门初态25t为周期开始计时
+       43:  313:                                QueueEmpty(W[E->Floor]);
+       43:  313-block  0
+call    0 returned 43
+        -:  314:                                QNode *Wnode;
+       43:  315:                                Wnode=W[E->Floor]->front->next;
+       43:  316:                                if(Wnode->data->flag[1]!=1-ele){
+branch  0 taken 39 (fallthrough)
+branch  1 taken 4
+       39:  317:                                Wnode->data->flag[0]=1;
+       39:  318:                                Wnode->data->flag[1]=ele;
+       39:  319:                                printf("No:%d正在进入电梯%d.Time:%d\n",Wnode->data->code,ele,*Time);
+       39:  319-block  0
+call    0 returned 39
+       39:  320:                                E->Action[2] = InOutTime * t;
+       39:  321:                                E->Action[2] -= t;
+       39:  322:                                return;}
+        -:  323:                                else{
+        4:  324:                                    Wnode=Wnode->next;
+        4:  325:                                    Wnode->data->flag[0]=1;
+        4:  326:                                    Wnode->data->flag[1]=ele;
+        4:  327:                                    printf("No:%d正在进入电梯%d.Time:%d\n",Wnode->data->code,ele,*Time);
+        4:  327-block  0
+call    0 returned 4
+        4:  328:                                    E->Action[2] = InOutTime * t;
+        4:  329:                                    E->Action[2] -= t;
+        4:  330:                                    return;
+        -:  331:                                }
+        -:  332:                                }
+        -:  333:                        }
+        -:  334:                    } else {//有人出
+      500:  335:                        if (E->Action[2] != -1) {//非计时状态，对下一个人进行计时
+      500:  335-block  0
+branch  0 taken 480 (fallthrough)
+branch  1 taken 20
+      480:  336:                            if (E->Action[2] == t) {//计时完毕，将人从电梯栈中弹出
+      480:  336-block  0
+branch  0 taken 20 (fallthrough)
+branch  1 taken 460
+       20:  337:                                E->ElePeople[E->Floor]->top->data->flag[0]=-2;
+       20:  338:                                printf("No:%d已离开电梯.Time:%d\n",Pop(E->ElePeople[E->Floor])->code,*Time);
+       20:  338-block  0
+call    0 returned 20
+call    1 returned 20
+       20:  339:                                E->Action[2] = -1;//计时器归位
+       20:  340:                                return;
+        -:  341:                            } else {
+      460:  342:                                printf("No:%d正在离开电梯\n",E->ElePeople[E->Floor]->top->data->code);
+      460:  342-block  0
+call    0 returned 460
+      460:  343:                                E->Action[2] -= t;//计时
+      460:  344:                                return;
+        -:  345:                            }
+        -:  346:                        } else {
+       20:  347:                            printf("No:%d正在离开电梯\n",E->ElePeople[E->Floor]->top->data->code);
+       20:  347-block  0
+call    0 returned 20
+       20:  348:                            E->ElePeople[E->Floor]->top->data->flag[0]=2;
+       20:  349:                            E->Action[2] = InOutTime * t;//开始计时
+       20:  350:                            E->Action[2] -= t;
+       20:  351:                            return;
+        -:  352:                        }
+        -:  353:                    }
+        -:  354:                break;
+      648:  355:            case 5:
+      648:  356:                if (StackEmpty(E->ElePeople[E->Floor])&&QueueEmpty(W[E->Floor])){
+      648:  356-block  0
+call    0 returned 648
+branch  1 taken 648 (fallthrough)
+branch  2 taken 0
+      648:  356-block  1
+call    3 returned 648
+branch  4 taken 643 (fallthrough)
+branch  5 taken 5
+      643:  357:                    Controller(W,Ele,But,ele,Time);
+      643:  357-block  0
+call    0 returned 643
+      643:  358:                    if(E->D3==1){
+branch  0 taken 0 (fallthrough)
+branch  1 taken 643
+    #####:  359:                        if(E->State==Idle){
+    %%%%%:  359-block  0
+branch  0 never executed
+branch  1 never executed
+    #####:  360:                            if(E->Action[2]==-1){
+    %%%%%:  360-block  0
+branch  0 never executed
+branch  1 never executed
+    #####:  361:                                E->Action[2]=IdleTime*t;
+    #####:  362:                                E->Action[2]-=t;
+    #####:  363:                                E->State=Idle;
+    #####:  364:                                printf("电梯:%d在静置等待\n",ele);
+    %%%%%:  364-block  0
+call    0 never executed
+    #####:  365:                                return;
+        -:  366:                            }else{
+    #####:  367:                                if(E->Action[2]==t){
+    %%%%%:  367-block  0
+branch  0 never executed
+branch  1 never executed
+    #####:  368:                                    E->Action[2]=-1;
+    #####:  369:                                    E->Action[1]=-1;
+    #####:  370:                                    E->Action[0]=6;
+    #####:  371:                                    E->State=GoingBack;
+    #####:  372:                                    printf("电梯:%d准备返回第一层\n",ele);
+    %%%%%:  372-block  0
+call    0 never executed
+    #####:  373:                                    return;
+        -:  374:                                }else{
+    #####:  375:                                    E->Action[2]-=t;
+    #####:  376:                                    return;
+    %%%%%:  376-block  0
+        -:  377:                                }
+        -:  378:                            }
+        -:  379:                        }
+        -:  380:                    }
+     643*:  381:                        if(E->Action[2]==-1){
+      643:  381-block  0
+branch  0 taken 35 (fallthrough)
+branch  1 taken 608
+    %%%%%:  381-block  1
+       35:  382:                            E->Action[2]=DoorOperTime*t;
+       35:  383:                            E->Action[2]-=t;
+       35:  384:                            printf("电梯:%d正在关门.Time:%d\n",ele, *Time);
+       35:  384-block  0
+call    0 returned 35
+       35:  385:                            return;
+        -:  386:                        }
+      608:  387:                        else if(E->Action[2]==t){
+      608:  387-block  0
+branch  0 taken 30 (fallthrough)
+branch  1 taken 578
+       30:  388:                        printf("电梯:%d门已关上\n",ele);
+       30:  388-block  0
+call    0 returned 30
+       30:  389:                        E->D3=1;
+       30:  390:                        E->Action[2]=-1;
+       40:  391:                        for(i=0;i<FloorNum;i++){
+       10:  391-block  0
+       40:  391-block  1
+branch  0 taken 40
+branch  1 taken 0 (fallthrough)
+       40:  392:                            if((But->CallDown[i]||But->CallUp[i])||E->CallCar[i]){
+       40:  392-block  0
+branch  0 taken 39 (fallthrough)
+branch  1 taken 1
+       39:  392-block  1
+branch  2 taken 18 (fallthrough)
+branch  3 taken 21
+       18:  392-block  2
+branch  4 taken 8 (fallthrough)
+branch  5 taken 10
+       30:  393:                                if(i==E->Floor){
+       30:  393-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 30
+    #####:  394:                                    E->Action[2] = -1;
+    #####:  395:                                    E->Action[1] = -1;
+    #####:  396:                                    E->Action[0] = 3;
+    #####:  397:                                    return;
+    %%%%%:  397-block  0
+        -:  398:                                }
+        -:  399:                                else{
+       30:  400:                                    E->Action[2] = -1;
+       30:  401:                                    E->Action[1] = -1;
+       30:  402:                                    E->Action[0] = 6;
+       30:  403:                                    printf("电梯:%d准备移动.Time:%d\n",ele, *Time);
+       30:  403-block  0
+call    0 returned 30
+       30:  404:                                    return;
+        -:  405:                                }
+        -:  406:                            }
+        -:  407:                        }
+    #####:  408:                            if(i!=FloorNum)return;
+    %%%%%:  408-block  0
+branch  0 never executed
+branch  1 never executed
+    %%%%%:  408-block  1
+        -:  409:                    }else{
+      578:  410:                        E->Action[2]-=t;
+      578:  411:                        printf("电梯:%d正在关门.Time:%d\n", ele,*Time);
+      578:  411-block  0
+call    0 returned 578
+      578:  412:                        return;
+        -:  413:                    }
+        -:  414:                }else{
+        5:  415:                        E->Action[0]=3;
+        5:  416:                        break;
+        5:  416-block  0
+        -:  417:                }
+    #####:  418:                break;
+    %%%%%:  418-block  0
+      600:  419:            case 6:
+        -:  420:                //准备移动
+      600:  421:                        E->CallCar[Controller(W, Ele, But, ele, Time)] = 1;//找到目标层
+      600:  421-block  0
+call    0 returned 600
+      600:  422:                        if(Controller(W,Ele,But,ele,Time)>E->Floor){//往上
+call    0 returned 600
+branch  1 taken 320 (fallthrough)
+branch  2 taken 280
+      320:  423:                            if(E->Action[2]==-1) {//加速态
+      320:  423-block  0
+branch  0 taken 16 (fallthrough)
+branch  1 taken 304
+       16:  424:                                E->Action[1] = 7;
+       16:  425:                                E->Action[2] = AccerlerTime * t;
+       16:  426:                                E->Action[2] -= t;
+       16:  427:                                printf("电梯:%d开始加速.Time:%d\n",ele, *Time);
+       16:  427-block  0
+call    0 returned 16
+       16:  428:                                return;
+        -:  429:                            }
+        -:  430:                            else{
+      304:  431:                                if(E->Action[2]==t){//加速完毕开始进入上升循环
+      304:  431-block  0
+branch  0 taken 16 (fallthrough)
+branch  1 taken 288
+       16:  432:                                    E->Action[0]=7;
+       16:  433:                                    E->Action[1]=-1;
+       16:  434:                                    E->Action[2]=-2;//置1是保证到达下一状态时层数不会直接变换
+       16:  435:                                    printf("电梯:%d加速完毕,准备上升\n",ele);
+       16:  435-block  0
+call    0 returned 16
+       16:  436:                                    return;
+        -:  437:                                }
+        -:  438:                                else{
+      288:  439:                                    E->Action[2]-=t;
+      288:  440:                                    printf("电梯:%d正在加速\n",ele);
+      288:  440-block  0
+call    0 returned 288
+      288:  441:                                    return;
+        -:  442:                                }
+        -:  443:                            }
+        -:  444:                        }else{//往下
+      280:  445:                            if(E->Action[2]==-1) {
+      280:  445-block  0
+branch  0 taken 14 (fallthrough)
+branch  1 taken 266
+       14:  446:                                E->Action[1] = 8;
+       14:  447:                                E->Action[2] = AccerlerTime * t;
+       14:  448:                                E->Action[2] -= t;
+       14:  449:                                printf("电梯:%d开始加速.Time:%d\n",ele, *Time);
+       14:  449-block  0
+call    0 returned 14
+       14:  450:                                return;
+        -:  451:                            }
+        -:  452:                            else{
+      266:  453:                                if(E->Action[2]==t){//加速完毕进入下降循环
+      266:  453-block  0
+branch  0 taken 14 (fallthrough)
+branch  1 taken 252
+       14:  454:                                    printf("电梯:%d加速完毕,准备下降:%d\n",ele, *Time);
+       14:  454-block  0
+call    0 returned 14
+       14:  455:                                    E->Action[0]=8;
+       14:  456:                                    E->Action[1]=-1;
+       14:  457:                                    E->Action[2]=-2;//置1是保证到达下一状态时层数不会直接变换
+       14:  458:                                    return;
+        -:  459:                                }
+        -:  460:                                else{
+      252:  461:                                    E->Action[2]-=t;
+      252:  462:                                    printf("电梯:%d正在加速\n",ele);
+      252:  462-block  0
+call    0 returned 252
+      252:  463:                                    return;
+        -:  464:                                }
+        -:  465:                            }
+        -:  466:                        }
+      335:  467:            case 7://上升循环
+      335:  468:                    if(E->CallCar[E->Floor+1]||But->CallUp[E->Floor+1]||But->CallDown[E->Floor+1]){//此时(在本层和下一层间运动)若下一层要进出，则开始减速
+      335:  468-block  0
+branch  0 taken 15 (fallthrough)
+branch  1 taken 320
+       15:  468-block  1
+branch  2 taken 15 (fallthrough)
+branch  3 taken 0
+       15:  468-block  2
+branch  4 taken 0 (fallthrough)
+branch  5 taken 15
+      320:  469:                        if(E->Action[2]==-1||E->Action[2]==-2) {//减速初态
+      320:  469-block  0
+branch  0 taken 319 (fallthrough)
+branch  1 taken 1
+      319:  469-block  1
+branch  2 taken 15 (fallthrough)
+branch  3 taken 304
+       16:  470:                            E->Action[1] = 2;
+       16:  471:                            E->Action[2] = deccerlerTime * t;
+       16:  472:                            E->Action[2] -= t;
+       16:  473:                            printf("电梯:%d开始减速:%d\n",ele, *Time);
+       16:  473-block  0
+call    0 returned 16
+       16:  474:                            return;
+        -:  475:                        }
+        -:  476:                        else{//减速完毕，回到状态2，即停顿判断态
+      304:  477:                            if(E->Action[2]==t){
+      304:  477-block  0
+branch  0 taken 16 (fallthrough)
+branch  1 taken 288
+       16:  478:                                E->Action[0]=2;
+       16:  479:                                E->Action[1]=-1;
+       16:  480:                                E->Action[2]=-1;
+       16:  481:                                E->Floor++;
+       16:  482:                                printf("电梯:%d已停止.Time:%d\n",ele, *Time);
+       16:  482-block  0
+call    0 returned 16
+       16:  483:                                return;
+        -:  484:                            }
+        -:  485:                            else{
+      288:  486:                                E->Action[2]-=t;
+      288:  487:                                printf("电梯:%d正在减速:%d\n",ele, *Time);
+      288:  487-block  0
+call    0 returned 288
+      288:  488:                                return;
+        -:  489:                            }
+        -:  490:                        }
+        -:  491:                    }
+        -:  492:                    else{//否则继续加速至下一层（到达下一层的时候停不下来）
+       15:  493:                        if(E->Action[2]==-1||E->Action[2]==-2) {
+       15:  493-block  0
+branch  0 taken 15 (fallthrough)
+branch  1 taken 0
+       15:  493-block  1
+branch  2 taken 1 (fallthrough)
+branch  3 taken 14
+        1:  494:                            E->Action[1] = 7;
+        1:  495:                            E->Action[2] = UpingTime * t;
+        1:  496:                            E->Action[2] -= t;
+        1:  497:                            printf("电梯:%d正在上升.Time:%d\n",ele, *Time);
+        1:  497-block  0
+call    0 returned 1
+        1:  498:                            return;
+        -:  499:                        }
+        -:  500:                        else{
+       14:  501:                            if(E->Action[2]==t){
+       14:  501-block  0
+branch  0 taken 1 (fallthrough)
+branch  1 taken 13
+        1:  502:                                E->Action[0]=7;
+        1:  503:                                E->Action[1]=-1;
+        1:  504:                                E->Action[2]=-1;//调回初态
+        1:  505:                                printf("电梯:%d上升了一层.Time:%d\n",ele, *Time);
+        1:  505-block  0
+call    0 returned 1
+        1:  506:                                E->Floor++;
+        1:  507:                                return;
+        -:  508:                            }
+        -:  509:                            else{
+       13:  510:                                E->Action[2]-=t;
+       13:  511:                                printf("电梯:%d正在上升.Time:%d\n",ele, *Time);
+       13:  511-block  0
+call    0 returned 13
+       13:  512:                                return;
+        -:  513:                            }
+        -:  514:                        }
+        -:  515:                    }
+      261:  516:            case 8:
+     261*:  517:                if(E->CallCar[E->Floor-1]||But->CallUp[E->Floor-1]||But->CallDown[E->Floor-1]){//此时(在本层和下一层间运动)若下一层要进出，则开始减速
+      261:  517-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 261
+    %%%%%:  517-block  1
+branch  2 never executed
+branch  3 never executed
+    %%%%%:  517-block  2
+branch  4 never executed
+branch  5 never executed
+      261:  518:                    if(E->Action[2]==-1||E->Action[2]==-2) {//减速初态
+      261:  518-block  0
+branch  0 taken 261 (fallthrough)
+branch  1 taken 0
+      261:  518-block  1
+branch  2 taken 14 (fallthrough)
+branch  3 taken 247
+       14:  519:                        E->Action[1] = 2;
+       14:  520:                        E->Action[2] = deccerlerTime * t;
+       14:  521:                        E->Action[2] -= t;
+       14:  522:                        printf("电梯:%d开始减速:%d\n",ele, *Time);
+       14:  522-block  0
+call    0 returned 14
+       14:  523:                        return;
+        -:  524:                    }
+        -:  525:                    else{//减速完毕，回到状态2，即停顿判断态
+      247:  526:                        if(E->Action[2]==t){
+      247:  526-block  0
+branch  0 taken 13 (fallthrough)
+branch  1 taken 234
+       13:  527:                            E->Action[0]=2;
+       13:  528:                            E->Action[1]=-1;
+       13:  529:                            E->Action[2]=-1;
+       13:  530:                            E->Floor--;
+       13:  531:                            printf("电梯:%d已停止.Time:%d\n",ele, *Time);
+       13:  531-block  0
+call    0 returned 13
+       13:  532:                            return;
+        -:  533:                        }
+        -:  534:                        else{
+      234:  535:                            E->Action[2]-=t;
+      234:  536:                            printf("电梯:%d正在减速:%d\n",ele, *Time);
+      234:  536-block  0
+call    0 returned 234
+      234:  537:                            return;
+        -:  538:                        }
+        -:  539:                    }
+        -:  540:                }
+        -:  541:                else{//否则继续加速至下一层（到达下一层的时候停不下来）
+    #####:  542:                    if(E->Action[2]==-1||E->Action[2]==-2) {
+    %%%%%:  542-block  0
+branch  0 never executed
+branch  1 never executed
+    %%%%%:  542-block  1
+branch  2 never executed
+branch  3 never executed
+    #####:  543:                        E->Action[1] = 8;
+    #####:  544:                        E->Action[2] = DowningTime * t;
+    #####:  545:                        E->Action[2] -= t;
+    #####:  546:                        printf("电梯:%d正在下降.Time:%d\n",ele, *Time);
+    %%%%%:  546-block  0
+call    0 never executed
+    #####:  547:                        return;
+        -:  548:                    }
+        -:  549:                    else{
+    #####:  550:                        if(E->Action[2]==t){
+    %%%%%:  550-block  0
+branch  0 never executed
+branch  1 never executed
+    #####:  551:                            E->Action[0]=8;
+    #####:  552:                            E->Action[1]=-1;
+    #####:  553:                            E->Action[2]=-1;//调回初态
+    #####:  554:                            printf("电梯:%d下降了一层.Time:%d\n",ele, *Time);
+    %%%%%:  554-block  0
+call    0 never executed
+    #####:  555:                            E->Floor--;
+    #####:  556:                            return;
+        -:  557:                        }
+        -:  558:                        else{
+    #####:  559:                            E->Action[2]-=t;
+    #####:  560:                            printf("电梯:%d正在下降.Time:%d\n", ele,*Time);
+    %%%%%:  560-block  0
+call    0 never executed
+    #####:  561:                            return;
+        -:  562:                        }
+        -:  563:                    }
+        -:  564:                }
+    #####:  565:            default:
+    #####:  566:                return;
+    %%%%%:  566-block  0
+        -:  567:        }
+        -:  568:    }
+        -:  569:}
+        -:  570:
+function PeopleProcess called 2394 returned 100% blocks executed 96%
+     2394:  571:void PeopleProcess(Queue **W,Elevator **Ele,Button *But,TimeLine *To,int* Time){
+        -:  572:    int i;
+        -:  573:    int j;
+        -:  574:    Elevator *E;
+        -:  575:
+     2394:  576:    printf("各楼层人群:\n");
+     2394:  576-block  0
+call    0 returned 2394
+    14364:  577:    for(i=0;i<FloorNum;i++){
+    11970:  577-block  0
+    14364:  577-block  1
+branch  0 taken 11970
+branch  1 taken 2394 (fallthrough)
+        -:  578:        QNode *node;
+    11970:  579:        node=W[i]->front->next;
+    16787:  580:        while(node!=NULL){
+    11970:  580-block  0
+    16787:  580-block  1
+branch  0 taken 4817
+branch  1 taken 11970 (fallthrough)
+     4817:  581:            node->data->InFloor;
+    4817*:  582:            if(node->data==NULL)break;
+     4817:  582-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 4817
+    %%%%%:  582-block  1
+     4817:  583:            switch (node->data->flag[0]) {
+     4817:  583-block  0
+branch  0 taken 664
+branch  1 taken 0
+branch  2 taken 4153
+      664:  584:                case 1:
+      664:  585:                    printf("No:%d正在进入电梯%d.Time:%d\n",node->data->code,node->data->flag[1] ,*Time);break;
+      664:  585-block  0
+call    0 returned 664
+    #####:  586:                case -1:
+    #####:  587:                    printf("No:%d已经进入电梯%d.Time:%d\n",node->data->code,node->data->flag[1],*Time);break;
+    %%%%%:  587-block  0
+call    0 never executed
+     4153:  588:                default:
+     4153:  589:                    if(node->data->InFloor==Ele[0]->Floor&&(Ele[0]->Action[0]==4||Ele[0]->Action[0]==3||Ele[0]->Action[0]==1)){
+     4153:  589-block  0
+branch  0 taken 454 (fallthrough)
+branch  1 taken 3699
+      454:  589-block  1
+branch  2 taken 219 (fallthrough)
+branch  3 taken 235
+      219:  589-block  2
+branch  4 taken 10 (fallthrough)
+branch  5 taken 209
+       10:  589-block  3
+branch  6 taken 0 (fallthrough)
+branch  7 taken 10
+      444:  590:                        node->data->GivenUpTime=0;
+      444:  591:                        printf("No:%d准备进入电梯0.Time:%d\n",node->data->code ,*Time);
+      444:  591-block  0
+call    0 returned 444
+      444:  592:                        break;
+     3709:  593:                    }else if(node->data->InFloor==Ele[1]->Floor&&(Ele[1]->Action[0]==4||Ele[1]->Action[0]==3||Ele[1]->Action[0]==1)){
+     3709:  593-block  0
+branch  0 taken 624 (fallthrough)
+branch  1 taken 3085
+      624:  593-block  1
+branch  2 taken 178 (fallthrough)
+branch  3 taken 446
+      178:  593-block  2
+branch  4 taken 25 (fallthrough)
+branch  5 taken 153
+       25:  593-block  3
+branch  6 taken 0 (fallthrough)
+branch  7 taken 25
+      599:  594:                        node->data->GivenUpTime=0;
+      599:  595:                        printf("No:%d准备进入电梯1.Time:%d\n",node->data->code ,*Time);
+      599:  595-block  0
+call    0 returned 599
+      599:  596:                        break;
+        -:  597:                    }else{
+     3110:  598:                        if(node->data->GivenUpTime==t){
+     3110:  598-block  0
+branch  0 taken 33 (fallthrough)
+branch  1 taken 3077
+       33:  599:                            DeletQueNode(W[i],node);
+       33:  599-block  0
+call    0 returned 33
+       33:  600:                            printf("No:%d离开排队队列.Time:%d\n",node->data->code,*Time);
+call    0 returned 33
+        -:  601:                        }
+        -:  602:                        else{
+     3077:  603:                            node->data->GivenUpTime-=t;
+     3077:  604:                            printf("No:%d正在排队等待,剩余等待时间:%d.Time:%d\n",node->data->code,node->data->GivenUpTime,*Time);
+     3077:  604-block  0
+call    0 returned 3077
+        -:  605:                        }
+        -:  606:                    }
+        -:  607:            }
+     4817:  608:            node=node->next;
+     4817:  608-block  0
+        -:  609:        }
+        -:  610:    }
+     2394:  611:    if(DeletTime(To)==1){
+     2394:  611-block  0
+call    0 returned 2394
+branch  1 taken 61 (fallthrough)
+branch  2 taken 2333
+       61:  612:        PersonRandGenAdd(W,But,Ele,To,Time);
+       61:  612-block  0
+call    0 returned 61
+        -:  613:    }
+     2394:  614:    printf("电梯内人群情况:\n");
+     2394:  614-block  0
+call    0 returned 2394
+     7182:  615:    for(j=0;j<2;j++){
+     4788:  615-block  0
+     7182:  615-block  1
+branch  0 taken 4788
+branch  1 taken 2394 (fallthrough)
+     4788:  616:        printf("电梯:%d\n",j);
+     4788:  616-block  0
+call    0 returned 4788
+     4788:  617:        E=Ele[j];
+        -:  618:    StackNode *p;
+    28728:  619:    for(i=0;i<FloorNum;i++){
+    23940:  619-block  0
+    28728:  619-block  1
+branch  0 taken 23940
+branch  1 taken 4788 (fallthrough)
+    23940:  620:        if(!StackEmpty(E->ElePeople[i])){
+    23940:  620-block  0
+call    0 returned 23940
+branch  1 taken 8146 (fallthrough)
+branch  2 taken 15794
+     8146:  621:            p=E->ElePeople[i]->top;
+    17945:  622:            while(p->next) {
+     8146:  622-block  0
+    17945:  622-block  1
+branch  0 taken 9799
+branch  1 taken 8146 (fallthrough)
+     9799:  623:                printf("No:%d 目标层:%d ", p->data->code,p->data->OutFloor);
+     9799:  623-block  0
+call    0 returned 9799
+     9799:  624:                if(p->data->flag[0]==-1){
+branch  0 taken 9319 (fallthrough)
+branch  1 taken 480
+     9319:  625:                    printf("状态:电梯内等待\n");
+     9319:  625-block  0
+call    0 returned 9319
+      480:  626:                }else if(p->data->flag[0]==2){
+      480:  626-block  0
+branch  0 taken 480 (fallthrough)
+branch  1 taken 0
+      480:  627:                    printf("状态:正在离开电梯\n");
+      480:  627-block  0
+call    0 returned 480
+        -:  628:                }else{
+        -:  629:                }
+     9799:  630:                p = p->next;
+     9799:  630-block  0
+        -:  631:            }
+        -:  632:
+        -:  633:        }
+        -:  634:    }
+        -:  635:    }
+     2394:  636:}
+function ElePrint called 2394 returned 100% blocks executed 88%
+     2394:  637:void ElePrint(Elevator**E,Queue **W,Button *But,int *Time){
+     2394:  637-block  0
+        -:  638:    if(EleDetail==0){
+        -:  639:        return;
+        -:  640:    }
+     2394:  641:    int i=0;
+     2394:  642:    int ele=0;
+        -:  643:    StackNode *p;
+        -:  644://    printf("各层呼叫电梯情况\n");
+        -:  645://    for(i=0;i<FloorNum;i++){
+        -:  646://        printf("第%d层:%d\n",i,E->CallCar[i]);
+        -:  647://    }
+     7182:  648:    for(ele=0;ele<2;ele++){
+     2394:  648-block  0
+     7182:  648-block  1
+branch  0 taken 4788
+branch  1 taken 2394 (fallthrough)
+     4788:  649:        printf("电梯%d运行状态:",ele);
+     4788:  649-block  0
+call    0 returned 4788
+     4788:  650:    switch (E[ele]->State) {
+branch  0 taken 2451
+branch  1 taken 2314
+branch  2 taken 23
+branch  3 taken 0
+branch  4 taken 0
+     2451:  651:        case 1:
+     2451:  652:            printf("向上");
+     2451:  652-block  0
+call    0 returned 2451
+     2451:  653:            break;
+     2314:  654:        case 2:
+     2314:  655:            printf("向下");
+     2314:  655-block  0
+call    0 returned 2314
+     2314:  656:            break;
+       23:  657:        case 3:
+       23:  658:            printf("静候");
+       23:  658-block  0
+call    0 returned 23
+       23:  659:            break;
+    #####:  660:        case 4:
+    #####:  661:            printf("返回1层");
+    %%%%%:  661-block  0
+call    0 never executed
+    #####:  662:            break;
+        -:  663:    }
+     4788:  664:    printf("  Case:%d  现在楼层:%d 目标楼层:%d 计时器状态:%d\n",E[ele]->Action[0],E[ele]->Floor ,Controller(W,E,But,ele,Time),E[ele]->Action[2]);
+     4788:  664-block  0
+call    0 returned 4788
+call    1 returned 4788
+        -:  665:    }
+        -:  666:}
+        -:  667:
+function QueuePrint called 2394 returned 100% blocks executed 96%
+     2394:  668:void QueuePrint(Queue**W,Button *button,Elevator **E){
+     2394:  668-block  0
+        -:  669:    if(!VisuaLize){
+        -:  670:        return;
+        -:  671:    }
+     2394:  672:    int i=0;
+     2394:  673:    if(W==NULL){
+     2394:  673-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 2394
+    #####:  674:        return;
+    %%%%%:  674-block  0
+        -:  675:    }
+     2394:  676:    int floor0=E[0]->Floor;
+     2394:  677:    int floor1=E[1]->Floor;
+     2394:  678:    printf("------------------------------------\n");
+     2394:  678-block  0
+call    0 returned 2394
+     2394:  679:    printf("层数   电梯0    电梯1   按钮情况   排队情况(从左到右为队头到队尾)\n");
+call    0 returned 2394
+     2394:  680:    printf("------------------------------------\n");
+call    0 returned 2394
+    14364:  681:    for(i=FloorNum-1;i>=0;i--){
+    14364:  681-block  0
+branch  0 taken 11970
+branch  1 taken 2394 (fallthrough)
+    11970:  682:        if(floor0==i&&floor1==i){
+    11970:  682-block  0
+branch  0 taken 2394 (fallthrough)
+branch  1 taken 9576
+     2394:  682-block  1
+branch  2 taken 1079 (fallthrough)
+branch  3 taken 1315
+     1079:  683:            printf("%d   | ***** | ***** |按 |上:%d |第%d层的排队队列有:%d人\n    | ***** | ***** |钮 |下:%d |",i,button->CallUp[i],i, QueueSize(W[i]),button->CallDown[i]);
+     1079:  683-block  0
+call    0 returned 1079
+call    1 returned 1079
+    10891:  684:        }else if(floor1==i){
+    10891:  684-block  0
+branch  0 taken 1315 (fallthrough)
+branch  1 taken 9576
+     1315:  685:            printf("%d   |       | ***** |按 |上:%d |第%d层的排队队列有:%d人\n    |       | ***** |钮 |下:%d |",i,button->CallUp[i],i, QueueSize(W[i]),button->CallDown[i]);
+     1315:  685-block  0
+call    0 returned 1315
+call    1 returned 1315
+     9576:  686:        }else if(floor0==i){
+     9576:  686-block  0
+branch  0 taken 1315 (fallthrough)
+branch  1 taken 8261
+     1315:  687:            printf("%d   | ***** |       |按 |上:%d |第%d层的排队队列有:%d人\n    | ***** |       |钮 |下:%d |",i,button->CallUp[i],i, QueueSize(W[i]),button->CallDown[i]);
+     1315:  687-block  0
+call    0 returned 1315
+call    1 returned 1315
+        -:  688:        }else{
+     8261:  689:            printf("%d   |       |       |按 |上:%d |第%d层的排队队列有:%d人\n    |       |       |钮 |下:%d |",i,button->CallUp[i],i, QueueSize(W[i]),button->CallDown[i]);
+     8261:  689-block  0
+call    0 returned 8261
+call    1 returned 8261
+        -:  690:        }
+    11970:  691:        QNode *p=W[i]->front->next;
+    11970:  692:        if(p){
+    11970:  692-block  0
+branch  0 taken 3701 (fallthrough)
+branch  1 taken 8269
+     8557:  693:            while(p){
+     3701:  693-block  0
+     8557:  693-block  1
+branch  0 taken 4856
+branch  1 taken 3701 (fallthrough)
+     4856:  694:                printf("No:%d   ", p->data->code);
+     4856:  694-block  0
+call    0 returned 4856
+     4856:  695:                p = p->next;
+        -:  696:            }
+        -:  697:        }
+    11970:  698:        printf("\n------------------------------------\n");
+    11970:  698-block  0
+call    0 returned 11970
+        -:  699:    }
+        -:  700:}
+        -:  701:#endif //MAIN_C_SIMULATEFUNC_H
